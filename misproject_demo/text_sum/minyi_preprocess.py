@@ -1,5 +1,43 @@
 import re
 
+# 取得資料
+def get_md():
+    # 下面這行之後應該是從資料庫抓，要再改
+    fileread =  open('./misproject_demo/text_sum/text_data/經濟學 CH22 微觀經濟學.md','r', encoding="utf-8")
+    # char = fileread.read() # 逐字讀取
+    lines = fileread.readlines() #逐行讀取
+    lines = [i.strip() for i in lines if i.strip()!=''] # 濾除換行字元，並去除空白字串
+    return lines
+
+# 定義每句的level(目前header都可，其他level若需要可再加)
+def define_level(md_list):
+    md_level = []
+    if md_list!=[]:
+        # md_list_pre = md_preprocess(md_list)
+        for sent in md_list:
+            # 判斷是h幾
+            if(sent[0]=='#'):
+                count = 0
+                while sent[count]=='#':
+                    count+=1
+                level = 'h'+str(count)
+            else:
+                level='not h'
+            md_level.append(level)
+    return md_level
+
+# 輸入特定level名稱，會return所有該level的元素index及內容(如果想要去掉header的結果我再改)
+def get_certain_level(data_list, level_name):
+    start = 0
+    level_index = []
+    level_text = []
+    while level_name in data_list[start:]:
+        index = data_list.index(level_name, start)
+        level_index.append(index)
+        level_text.append(md_list[index])
+        start = index+1
+    return level_index, level_text
+
 # 前處理-斜、粗體；移除特殊char
 def remove(s):
     remove_chars = r'\*' # 適用於斜體(*)、粗體(**)
@@ -41,11 +79,24 @@ def find_substr(s, subs):
 def delete_subs(s, l_pos, r_pos, length=1):
     return s[:l_pos]+s[r_pos+length:]
 
-# -------------------------
+# 對list前處理
+'''def md_preprocess(md_list):
+    for sent in md_list:
+        # 判斷是h幾
+        count = 0
+        while sent[count]=='#':
+            count+=1
+        level = 'h'+str(count)
+
+
+    return md_list_pre'''
+
+
+'''# -------------------------
 test_str = '4. 經過BERT的預訓練model後，得到**每個[CLS]標記的向量Ti**，做為**每個句子的特徵向量** 5. 做Fine-tuning(上圖下方再繼續疊)'
 
-'''new_str = remove(test_str)
-print(test_str_2)'''
+new_str = remove(test_str)
+print(test_str_2)
 
 #--------------------------
 test_str_2 = '早安各位，我*已經不想**做專題**，我太難了*真的，~~我想放假~~嗚嗚嗚'
@@ -58,3 +109,11 @@ test_str_2_d = delete_subs(test_str_2_r, p_list[0], p_list[1], len('~~'))
 
 print('test_str_2: %s\ntest_str_2_r: %s\ntest_str_2_d: %s'
       % (test_str_2, test_str_2_r, test_str_2_d))
+'''
+# --------------------------
+md_list = get_md()
+# print(md_list)
+# --------------------------
+level_index, level_text = get_certain_level(define_level(md_list), 'h2')
+print(level_index)
+print(level_text)
