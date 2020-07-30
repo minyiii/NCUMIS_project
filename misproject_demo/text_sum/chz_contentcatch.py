@@ -1,4 +1,5 @@
-!pip install textrank4zh
+#!pip install textrank4zh
+import re
 
 # 讀取並做前處理
 fileread =  open('./misproject_demo/text_sum/text_data/經濟學 CH22 微觀經濟學.md','r' ,encoding='UTF-8')   
@@ -12,10 +13,15 @@ def predo_content(lines):
   flag = True
   while fileread != [] and flag == True:
     for i in range(len(lines)): # 逐句讀取字元，並將特定字元改成''
+      # 刪除圖片url
+      str_url = r'[a-z]*[:.]+\S+'
+      lines[i] = re.sub(str_url, '', lines[i])
       lines[i] = lines[i].replace("**","") #把**刪掉
       lines[i] = lines[i].replace(">","") #把>刪掉
       lines[i] = lines[i].replace(":::","") #把>刪掉
       lines[i] = lines[i].replace("info","") #把>刪掉
+      lines[i] = lines[i].replace("[]","") #把[]刪掉
+      lines[i] = lines[i].replace("!","") #把!刪掉
       content.append(lines[i])
     flag = False
   return content
@@ -48,8 +54,8 @@ def catch_label(content):
       p.append(content[i])
  
   return h1, h2, h3, p
+h1, h2,h3,p = catch_label(content)
 
-catch_label(content)
 p = str(p) #將paragraph轉為字串
 
 # 抓取文字摘要
