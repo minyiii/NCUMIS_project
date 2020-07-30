@@ -23,12 +23,6 @@ def predo_content(lines):
       lines[i] = lines[i].replace("[]","") #把[]刪掉
       lines[i] = lines[i].replace("!","") #把!刪掉
       content.append(lines[i])
-    flag = False
-  return content
-  #print(content)
-content = predo_content(lines)
-print(content)
-
 
 # 判斷哪些是h1 h2 h3 或其他
 # 判斷句首#數量來做分類
@@ -44,11 +38,13 @@ def catch_label(content):
     
     # 判斷為哪類
     if num == 1:
-      content[i]
+      content[i] = content[i].replace("#","") #把#刪掉
       h1.append(content[i])
     elif num == 2:
+      content[i] = content[i].replace("#","") #把#刪掉
       h2.append(content[i])
     elif num == 3:
+      content[i] = content[i].replace("#","") #把#刪掉
       h3.append(content[i]) 
     else:
       p.append(content[i])
