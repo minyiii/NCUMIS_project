@@ -1,4 +1,15 @@
 import re
+import pandas as pd
+import random, string
+import json
+
+levels = ['h1','h2','h3','text','li']
+level_num = {'h1':4, 'h2':3, 'h3':2, 'text':1, 'li':0}
+
+# --------------------------------------------------
+# 取得
+def get_key (dict_, value):
+    return [k for k, v in dict_.items() if v == value]
 
 # 取得資料
 def get_md():
@@ -13,26 +24,52 @@ def get_md():
             lines_.append(i_.strip())
     return lines_
 
-# 定義每句的level(目前header都可，其他level若需要可再加)
+def get_level(sent): # 判斷是h幾
+    if(sent[0]=='#'):
+        count = 0
+        while sent[count]=='#':
+            count+=1
+            level = 'h'+str(count)
+    elif re.match(r'(\d+)\.\s', sent):
+        level = 'li'
+    else :
+        level='text'
+    return level
+
+
+# 定義每句的level，傳回dataframe(目前header都可，其他level若需要可再加)
 def define_level(md_list):
-    md_level = []
+    df_level = pd.DataFrame(columns=['level', 'topic', 'father'])
+    # temp_id = ''.join(random.choice(string.ascii_letters) for x in range(5))
     if md_list!=[]:
+        f_index = 0
         # md_list_pre = md_preprocess(md_list)
         for sent in md_list:
-            # 判斷是h幾
-            if(sent[0]=='#'):
-                count = 0
-                while sent[count]=='#':
-                    count+=1
-                level = 'h'+str(count)
-            elif re.match(r'(\d+)\.\s', sent):
-                level = 'li'
-            else :
-                level='not h'
-            md_level.append(level)
-    return md_level
+            # 這句的level
+            level = get_level(sent)
+            # 這句的父節點
+            flag = False
+            if df_level.empty: # 為空，代表這筆為h1
+                count=-1
+                f_index=-1
+            else:
+                count=len(df_level)-1
+            while flag==False and count>=0:
+                temp_l = df_level.loc[count][0]
+                if temp_l==level: # 同level就同爸爸
+                    f_index = df_level.loc[count][2]
+                    flag = True
+                elif level_num[temp_l]>level_num[level]: # 新的比較小，上一個是爸爸
+                    f_index = count
+                    flag = True
+                # 剩下沒處理的情況是"新的比較大"，要繼續往上找level大於等於他的
+                count-=1
+            s = pd.Series({'level':level, 'topic':remove_title(sent), 'father':f_index})
+            # 这里 Series 必须是 dict-like 类型
+            df_level = df_level.append(s, ignore_index=True)
+    return df_level
 
-# 輸入特定level名稱，會return所有該level的元素index及內容(如果想要去掉header的結果我再改)
+'''# 輸入特定level名稱，會return所有該level的元素index及內容(如果想要去掉header的結果我再改)
 def get_certain_level(data_list, level_name):
     start = 0
     level_index = []
@@ -40,9 +77,9 @@ def get_certain_level(data_list, level_name):
     while level_name in data_list[start:]:
         index = data_list.index(level_name, start)
         level_index.append(index)
-        level_text.append(md_list[index])
+        level_text.append(remove_title(md_list[index]))
         start = index+1
-    return level_index, level_text
+    return level_index, level_text'''
 
 # 前處理-斜、粗體、冒號、>；移除特殊char
 def pre_remove(s):
@@ -96,6 +133,38 @@ def remove_title(s):
 
     return s_.strip()
 
+# --------------------------
+# user選擇要不要顯示這個level
+select_level = {'h1':True, 'h2':True, 'h3':False, 'text':False, 'li':True}
+true_level = get_key(select_level, True)
+
+# 下個level有沒有選
+# print(select_level[levels[levels.index('h2')+1]])
+# --------------------------
+md_list = get_md()
+print(md_list)
+# --------------------------
+df_level = define_level(md_list)
+# print(df_level)
+
+for index in range(len(df_level)):
+    print('index:', index, 'text: ', df_level.loc[index][1][0:5] , 'father_index: ', df_level.loc[index][2])
+
+# -----------------0809------------------
+def get_node(index):
+    now_node={'id':''.join(random.choice(string.ascii_letters) for x in range(5)),
+             'topic':df_level.loc[index][1]}
+    child_list=[]
+    for i in range(index, len(df_level)): # 只有後方的句子才可能為子節點，不用整個df都查
+        if df_level.loc[i][2]==index:
+            ch_node=get_node(i)
+            child_list.append(ch_node)
+    if len(child_list)>0:
+        now_node['children']=child_list
+    return now_node
+
+j = json.dumps(get_node(0), ensure_ascii=False)
+print(j)
 #--------------------------
 '''test_str_2 = '早安各位，我*已經不想**做專題**，我太難了*真的，~~我想放假~~嗚嗚嗚'
 
@@ -108,31 +177,3 @@ test_str_2_d = delete_subs(test_str_2_r, p_list[0], p_list[1], len('~~'))
 print('test_str_2: %s\ntest_str_2_r: %s\ntest_str_2_d: %s'
       % (test_str_2, test_str_2_r, test_str_2_d))
 '''
-# --------------------------
-md_list = get_md()
-print(md_list)
-# --------------------------
-print('-----------------------------------------')
-level_index, level_text = get_certain_level(define_level(md_list), 'li')
-print(level_index)
-print(level_text)
-# --------------------------
-
-print('-----------------------------------------')
-for sent in md_list:
-    print(remove_title(sent))
-
-# --------------------------
-'''meta_name = 'MIS G6'
-meta_author = 'author@gmail.com'
-meta_ver = '0.2'
-
-json_dict={
-    'meta':{
-        "name":meta_name,
-        "author":meta_author,
-        "version":meta_ver
-    },
-    'format':'node_tree',
-    'data':''
-}'''
