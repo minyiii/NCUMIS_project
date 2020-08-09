@@ -4,7 +4,7 @@ import random, string
 import json
 
 levels = ['h1','h2','h3','text','li']
-level_num = {'h1':4, 'h2':3, 'h3':2, 'text':1, 'li':0}
+level_num = {'h1':5, 'h2':4, 'h3':3, 'text':2, 'li':1, 'sub':0}
 
 # --------------------------------------------------
 # 取得
@@ -24,7 +24,8 @@ def get_md():
             lines_.append(i_.strip())
     return lines_
 
-def get_level(sent): # 判斷是h幾
+# 判斷一個句子的level
+def get_level(sent):
     if(sent[0]=='#'):
         count = 0
         while sent[count]=='#':
@@ -32,10 +33,11 @@ def get_level(sent): # 判斷是h幾
             level = 'h'+str(count)
     elif re.match(r'(\d+)\.\s', sent):
         level = 'li'
+    elif (sent[0]=='-' or sent[0]=='*') and sent[1]==' ':
+        level = 'sub'
     else :
         level='text'
     return level
-
 
 # 定義每句的level，傳回dataframe(目前header都可，其他level若需要可再加)
 def define_level(md_list):
@@ -69,24 +71,11 @@ def define_level(md_list):
             df_level = df_level.append(s, ignore_index=True)
     return df_level
 
-'''# 輸入特定level名稱，會return所有該level的元素index及內容(如果想要去掉header的結果我再改)
-def get_certain_level(data_list, level_name):
-    start = 0
-    level_index = []
-    level_text = []
-    while level_name in data_list[start:]:
-        index = data_list.index(level_name, start)
-        level_index.append(index)
-        level_text.append(remove_title(md_list[index]))
-        start = index+1
-    return level_index, level_text'''
-
 # 前處理-斜、粗體、冒號、>；移除特殊char
 def pre_remove(s):
-    remove_chars = r'\*' # 適用於斜體(*)、粗體(**)
-    # re.sub(哪些char要被換, 換成甚麼, 哪個字串)
-    s_ = re.sub(remove_chars, '', s)
-    s_ = s_.replace(':::', '')
+    # remove_chars = r'\*' # 適用於斜體(*)、粗體(**)
+    # s_ = re.sub(remove_chars, '', s) # re.sub(哪些char要被換, 換成甚麼, 哪個字串)
+    s_ = s.replace(':::', '')
     s_ = s_.replace('>','')
 
     pos = find_substr(s_, '~~')
@@ -125,11 +114,20 @@ def delete_subs(s, l_pos, r_pos, length=1):
 
 # 把header和list的數字都移除，因為之後要放進json檔裡
 def remove_title(s):
-    rem_chars = r'\#' # 移除井字號
+    s_ = s.replace('-','')
+    s_ = s_.replace('*','')
+    s_ = s_.replace('#','')
+
+    '''rem_chars = r'\#' # 移除井字號
     # re.sub(哪些char要被換, 換成甚麼, 哪個字串)
     s_ = re.sub(rem_chars, '', s)
-    rem_chars_2 = r'(\d+)\.\s' # 移除'1. '、'2. '
+    rem_chars_2 = r'\-' # 移除'-'
     s_ = re.sub(rem_chars_2, '', s_)
+    rem_chars_4 = r'\*' # 適用於斜體(*)、粗體(**)
+    s_ = re.sub(rem_chars_4, '', s_)'''
+
+    rem_chars_3 = r'(\d+)\.\s' # 移除'1. '、'2. '
+    s_ = re.sub(rem_chars_3, '', s_)
 
     return s_.strip()
 
@@ -145,7 +143,7 @@ md_list = get_md()
 print(md_list)
 # --------------------------
 df_level = define_level(md_list)
-# print(df_level)
+print(df_level)
 
 for index in range(len(df_level)):
     print('index:', index, 'text: ', df_level.loc[index][1][0:5] , 'father_index: ', df_level.loc[index][2])
@@ -163,8 +161,27 @@ def get_node(index):
         now_node['children']=child_list
     return now_node
 
-j = json.dumps(get_node(0), ensure_ascii=False)
-print(j)
+#
+def get_node_2(index):
+    now_node={'text':df_level.loc[index][1],
+        'fx':random.uniform(-700, 700),
+        'fy':random.uniform(-700, 700),
+        'color':'rgba({}, {}, {}, {})'.format(random.uniform(0,255),random.uniform(0,255),random.uniform(0,255),random.uniform(0,255))
+        }
+    child_list=[]
+    for i in range(index, len(df_level)): # 只有後方的句子才可能為子節點，不用整個df都查
+        if df_level.loc[i][2]==index:
+            ch_node=get_node_2(i)
+            child_list.append(ch_node)
+    now_node['nodes']=child_list
+    return now_node
+
+# j = json.dumps(get_node(0), ensure_ascii=False, separators=(',\n', ': '))
+# print(j)
+with open('0809_min_test_2.json', 'w', encoding='utf-8') as f:
+    # json.dumps(get_node(0), ensure_ascii=False, separators=(',\n', ': '))
+    json.dump(get_node_2(0), f, ensure_ascii=False, separators=(',\n', ': '))
+
 #--------------------------
 '''test_str_2 = '早安各位，我*已經不想**做專題**，我太難了*真的，~~我想放假~~嗚嗚嗚'
 

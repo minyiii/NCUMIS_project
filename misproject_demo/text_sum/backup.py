@@ -3,6 +3,18 @@
 # df_level_ = df_level[df_level['level'].isin(list_)]
 ### print(df_level_)
 # ---------------------------------
+
+'''# 輸入特定level名稱，會return所有該level的元素index及內容(如果想要去掉header的結果我再改)
+def get_certain_level(data_list, level_name):
+    start = 0
+    level_index = []
+    level_text = []
+    while level_name in data_list[start:]:
+        index = data_list.index(level_name, start)
+        level_index.append(index)
+        level_text.append(remove_title(md_list[index]))
+        start = index+1
+    return level_index, level_text'''
 # 從根結點開始
 '''data_dict={'id': "root", 'topic': df_level.loc[0][1]}
 next_level = levels[levels.index('h1')+1] # h1下個level
