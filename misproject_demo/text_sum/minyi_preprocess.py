@@ -2,11 +2,17 @@ import re
 import pandas as pd
 import random, string
 import json
+from textrank4zh import TextRank4Keyword, TextRank4Sentence
 
-levels = ['h1','h2','h3','text','li']
+# ------------------- 要從前端取得的內容 -------------------
+# sub代表li底下的解釋
+levels = ['h1','h2','h3','text','li','sub']
 level_num = {'h1':5, 'h2':4, 'h3':3, 'text':2, 'li':1, 'sub':0}
+do_textsum = True
+# user選擇要不要顯示這個level
+select_level = {'h1':True, 'h2':True, 'h3':False, 'text':False, 'li':True, 'sub':True}
 
-# --------------------------------------------------
+# ------------------- function ---------------------
 # 取得
 def get_key (dict_, value):
     return [k for k, v in dict_.items() if v == value]
@@ -41,7 +47,7 @@ def get_level(sent):
 
 # 定義每句的level，傳回dataframe(目前header都可，其他level若需要可再加)
 def define_level(md_list):
-    df_level = pd.DataFrame(columns=['level', 'topic', 'father'])
+    df_level = pd.DataFrame(columns=['level', 'topic', 'father', 'is_sum'])
     # temp_id = ''.join(random.choice(string.ascii_letters) for x in range(5))
     if md_list!=[]:
         f_index = 0
@@ -49,6 +55,7 @@ def define_level(md_list):
         for sent in md_list:
             # 這句的level
             level = get_level(sent)
+        # if select_level[level]:
             # 這句的父節點
             flag = False
             if df_level.empty: # 為空，代表這筆為h1
@@ -56,6 +63,7 @@ def define_level(md_list):
                 f_index=-1
             else:
                 count=len(df_level)-1
+
             while flag==False and count>=0:
                 temp_l = df_level.loc[count][0]
                 if temp_l==level: # 同level就同爸爸
@@ -66,17 +74,20 @@ def define_level(md_list):
                     flag = True
                 # 剩下沒處理的情況是"新的比較大"，要繼續往上找level大於等於他的
                 count-=1
-            s = pd.Series({'level':level, 'topic':remove_title(sent), 'father':f_index})
-            # 这里 Series 必须是 dict-like 类型
+            s = pd.Series({'level':level, 'topic':remove_title(sent), 'father':f_index, 'is_sum':False})
             df_level = df_level.append(s, ignore_index=True)
     return df_level
 
 # 前處理-斜、粗體、冒號、>；移除特殊char
 def pre_remove(s):
-    # remove_chars = r'\*' # 適用於斜體(*)、粗體(**)
-    # s_ = re.sub(remove_chars, '', s) # re.sub(哪些char要被換, 換成甚麼, 哪個字串)
-    s_ = s.replace(':::', '')
+    # 刪除圖片url
+    str_url = r'[a-z]*[:.]+\S+'
+    s_ = re.sub(str_url, '', s)
+
+    s_ = s_.replace(':::', '')
     s_ = s_.replace('>','')
+    s_ = s_.replace('!','')
+    s_ = s_.replace('[]','')
 
     pos = find_substr(s_, '~~')
     if pos:
@@ -118,50 +129,46 @@ def remove_title(s):
     s_ = s_.replace('*','')
     s_ = s_.replace('#','')
 
-    '''rem_chars = r'\#' # 移除井字號
-    # re.sub(哪些char要被換, 換成甚麼, 哪個字串)
-    s_ = re.sub(rem_chars, '', s)
-    rem_chars_2 = r'\-' # 移除'-'
-    s_ = re.sub(rem_chars_2, '', s_)
-    rem_chars_4 = r'\*' # 適用於斜體(*)、粗體(**)
-    s_ = re.sub(rem_chars_4, '', s_)'''
-
-    rem_chars_3 = r'(\d+)\.\s' # 移除'1. '、'2. '
-    s_ = re.sub(rem_chars_3, '', s_)
+    rem_chars = r'(\d+)\.\s' # 移除'1. '、'2. '
+    s_ = re.sub(rem_chars, '', s_)
 
     return s_.strip()
 
-# --------------------------
-# user選擇要不要顯示這個level
-select_level = {'h1':True, 'h2':True, 'h3':False, 'text':False, 'li':True}
-true_level = get_key(select_level, True)
-
-# 下個level有沒有選
-# print(select_level[levels[levels.index('h2')+1]])
-# --------------------------
-md_list = get_md()
-print(md_list)
-# --------------------------
-df_level = define_level(md_list)
-print(df_level)
-
-for index in range(len(df_level)):
-    print('index:', index, 'text: ', df_level.loc[index][1][0:5] , 'father_index: ', df_level.loc[index][2])
-
-# -----------------0809------------------
+# 遞迴產生json檔案(ver1)
 def get_node(index):
     now_node={'id':''.join(random.choice(string.ascii_letters) for x in range(5)),
-             'topic':df_level.loc[index][1]}
+            'topic':df_level.loc[index][1]}
     child_list=[]
+
+    # now_node['topic']=df_level.loc[index][1]
     for i in range(index, len(df_level)): # 只有後方的句子才可能為子節點，不用整個df都查
-        if df_level.loc[i][2]==index:
+        # 如果該row的father欄位為自己的index，代表為自己小孩，加進children
+        if df_level.loc[i][2]==index and select_level[df_level.loc[i][0]]:
             ch_node=get_node(i)
             child_list.append(ch_node)
+    '''else: # 摘要的節點
+        now_node['topic']='摘要'
+        child_list.append()'''
+
     if len(child_list)>0:
         now_node['children']=child_list
     return now_node
 
-#
+# 取得摘要的節點(ver1)
+def get_sum_node():
+    sum_node={'id':''.join(random.choice(string.ascii_letters) for x in range(5)),
+            'topic':'摘要'}
+    child_list=[]
+
+    for i in sum: # 只有後方的句子才可能為子節點，不用整個df都查
+        ch_node={'id':''.join(random.choice(string.ascii_letters) for x in range(5)),
+            'topic':i}
+        child_list.append(ch_node)
+
+    sum_node['children']=child_list
+    return sum_node
+
+# 遞迴產生json檔案(ver2)
 def get_node_2(index):
     now_node={'text':df_level.loc[index][1],
         'fx':random.uniform(-700, 700),
@@ -170,17 +177,90 @@ def get_node_2(index):
         }
     child_list=[]
     for i in range(index, len(df_level)): # 只有後方的句子才可能為子節點，不用整個df都查
-        if df_level.loc[i][2]==index:
+        if df_level.loc[i][2]==index and select_level[df_level.loc[i][0]]:
             ch_node=get_node_2(i)
             child_list.append(ch_node)
     now_node['nodes']=child_list
     return now_node
 
-# j = json.dumps(get_node(0), ensure_ascii=False, separators=(',\n', ': '))
-# print(j)
-with open('0809_min_test_2.json', 'w', encoding='utf-8') as f:
-    # json.dumps(get_node(0), ensure_ascii=False, separators=(',\n', ': '))
-    json.dump(get_node_2(0), f, ensure_ascii=False, separators=(',\n', ': '))
+# 取得摘要的節點(ver2)
+def get_sum_node_2():
+    sum_node={'text':'摘要',
+        'fx':random.uniform(-700, 700),
+        'fy':random.uniform(-700, 700),
+        'color':'rgba({}, {}, {}, {})'.format(random.uniform(0,255),random.uniform(0,255),random.uniform(0,255),random.uniform(0,255))
+        }
+    child_list=[]
+
+    for i in sum: # 只有後方的句子才可能為子節點，不用整個df都查
+        ch_node={'text':i,
+            'fx':random.uniform(-700, 700),
+            'fy':random.uniform(-700, 700),
+            'color':'rgba({}, {}, {}, {})'.format(random.uniform(0,255),random.uniform(0,255),random.uniform(0,255),random.uniform(0,255)),
+            'nodes':[]
+        }
+        child_list.append(ch_node)
+
+    sum_node['nodes']=child_list
+    return sum_node
+
+# 把df_level中level為text的內容抓來做文本摘要，會回傳摘要句子及其在df中的index
+def catch_label():
+    paragraph = df_level[df_level["level"] == "text"] # 把所有為text level的內容都整理成新的df
+    par = ""
+    summary = []
+    summary_index = []
+    sentence = paragraph["topic"].values # 擷取句子
+    index = paragraph.index
+    for i in range(len(sentence)):
+        par += sentence[i] + "\n"
+    # print(sentence)
+    # print(index)
+
+    # 文字摘要
+    tr4s = TextRank4Sentence()
+    tr4s.analyze(text = par, lower = True, source = 'all_filters')
+
+    for i in tr4s.get_key_sentences(num = 6): # num = 6 代表輸出最好的6句
+        # sol 1
+        summary.append(i.sentence)
+
+        for j in range(len(sentence)):
+            if i.sentence == sentence[j]:
+                summary_index.append(index[j])
+                break
+
+    return summary, summary_index
+
+# ------------------- 執行 -------------------
+'''true_level = get_key(select_level, True)
+# 下個level有沒有選
+# print(select_level[levels[levels.index('h2')+1]])'''
+
+
+md_list = get_md()
+print(md_list)
+
+df_level = define_level(md_list) # 生成dataframe
+print(df_level)
+
+# 可省
+for index in range(len(df_level)):
+    print('index:', index, 'text: ', df_level.loc[index][1][0:5] , 'father_index: ', df_level.loc[index][2])
+
+# 取得欲建立json檔前的dict
+# node_dict = get_node(0)
+node_dict = get_node_2(0)
+# 得到摘要index
+if do_textsum:
+    sum, sum_index = catch_label()
+    # node_dict['children'].append(get_sum_node())
+    node_dict['nodes'].append(get_sum_node_2())
+    # print(sum_index)
+
+# 產生json檔
+with open('0819_min_test_2_v2.json', 'w', encoding='utf-8') as f:
+    json.dump(node_dict, f, ensure_ascii=False, separators=(',\n', ': '))
 
 #--------------------------
 '''test_str_2 = '早安各位，我*已經不想**做專題**，我太難了*真的，~~我想放假~~嗚嗚嗚'
