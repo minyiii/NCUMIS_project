@@ -218,7 +218,6 @@ def catch_label():
     tr4s.analyze(text = par, lower = True, source = 'all_filters')
 
     for i in tr4s.get_key_sentences(num = 6): # num = 6 代表輸出最好的6句
-        # sol 1
         summary.append(i.sentence)
 
         for j in range(len(sentence)):
@@ -233,7 +232,6 @@ def catch_label():
 # 下個level有沒有選
 # print(select_level[levels[levels.index('h2')+1]])'''
 
-
 md_list = get_md()
 print(md_list)
 
@@ -245,28 +243,16 @@ for index in range(len(df_level)):
     print('index:', index, 'text: ', df_level.loc[index][1][0:5] , 'father_index: ', df_level.loc[index][2])
 
 # 取得欲建立json檔前的dict
-# node_dict = get_node(0)
-node_dict = get_node_2(0)
+node_dict = get_node(0)
+# node_dict = get_node_2(0)
+
 # 得到摘要index
 if do_textsum:
     sum, sum_index = catch_label()
-    # node_dict['children'].append(get_sum_node())
-    node_dict['nodes'].append(get_sum_node_2())
+    node_dict['children'].append(get_sum_node())
+    # node_dict['nodes'].append(get_sum_node_2())
     # print(sum_index)
 
 # 產生json檔
-with open('0819_min_test_2_v2.json', 'w', encoding='utf-8') as f:
+with open('./misproject_demo/text_sum/json/0813_test1.json', 'w', encoding='utf-8') as f:
     json.dump(node_dict, f, ensure_ascii=False, separators=(',\n', ': '))
-
-#--------------------------
-'''test_str_2 = '早安各位，我*已經不想**做專題**，我太難了*真的，~~我想放假~~嗚嗚嗚'
-
-test_str_2_r = remove(test_str_2)
-p_list = find_substr(test_str_2_r, '~~')
-# print(p_list)
-
-test_str_2_d = delete_subs(test_str_2_r, p_list[0], p_list[1], len('~~'))
-
-print('test_str_2: %s\ntest_str_2_r: %s\ntest_str_2_d: %s'
-      % (test_str_2, test_str_2_r, test_str_2_d))
-'''

@@ -103,3 +103,15 @@ if(child_list):
 
 j = json.dumps(node_dict, ensure_ascii=False)
 print(j)'''
+
+'''test_str_2 = '早安各位，我*已經不想**做專題**，我太難了*真的，~~我想放假~~嗚嗚嗚'
+
+test_str_2_r = remove(test_str_2)
+p_list = find_substr(test_str_2_r, '~~')
+# print(p_list)
+
+test_str_2_d = delete_subs(test_str_2_r, p_list[0], p_list[1], len('~~'))
+
+print('test_str_2: %s\ntest_str_2_r: %s\ntest_str_2_d: %s'
+      % (test_str_2, test_str_2_r, test_str_2_d))
+'''
