@@ -6,7 +6,7 @@ from textrank4zh import TextRank4Keyword, TextRank4Sentence
 
 # ------------------- 要從前端取得的內容 -------------------
 # sub代表li底下的解釋
-levels = ['h1','h2','h3','text','li','sub']
+# levels = ['h1','h2','h3','text','li','sub']
 level_num = {'h1':5, 'h2':4, 'h3':3, 'text':2, 'li':1, 'sub':0}
 do_textsum = True
 # user選擇要不要顯示這個level
@@ -22,7 +22,6 @@ def get_md():
     # 下面這行之後應該是從資料庫抓，要再改
     fileread =  open('./misproject_demo/text_sum/text_data/經濟學 CH22 微觀經濟學.md','r', encoding="utf-8")
     lines = fileread.readlines() #逐行讀取
-    # lines = [i.strip() for i in lines if i.strip()!=''] # 濾除換行字元，並去除空白字串
     lines_=[]
     for i in lines:
         i_ = pre_remove(i)
@@ -48,20 +47,17 @@ def get_level(sent):
 # 定義每句的level，傳回dataframe(目前header都可，其他level若需要可再加)
 def define_level(md_list):
     df_level = pd.DataFrame(columns=['level', 'topic', 'father', 'is_sum'])
-    # temp_id = ''.join(random.choice(string.ascii_letters) for x in range(5))
     if md_list!=[]:
         f_index = 0
-        # md_list_pre = md_preprocess(md_list)
         for sent in md_list:
             # 這句的level
             level = get_level(sent)
-        # if select_level[level]:
             # 這句的父節點
             flag = False
-            if df_level.empty: # 為空，代表這筆為h1
+            if df_level.empty: # df為空，代表當下這筆為第一筆，也就是h1
                 count=-1
                 f_index=-1
-            else:
+            else: # 非空，從最後一筆資料開始
                 count=len(df_level)-1
 
             while flag==False and count>=0:
@@ -69,7 +65,7 @@ def define_level(md_list):
                 if temp_l==level: # 同level就同爸爸
                     f_index = df_level.loc[count][2]
                     flag = True
-                elif level_num[temp_l]>level_num[level]: # 新的比較小，上一個是爸爸
+                elif level_num[temp_l]>level_num[level]: # 新的這筆level較小
                     f_index = count
                     flag = True
                 # 剩下沒處理的情況是"新的比較大"，要繼續往上找level大於等於他的
