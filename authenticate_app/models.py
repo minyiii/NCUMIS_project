@@ -10,11 +10,12 @@ class jsonContent(models.Model):
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     title = models.CharField(max_length=30)
     upload = models.FileField(upload_to='uploads/')
-    content = models.CharField(max_length=1000, blank=True, null=True)
-    #content = JSONField(default=None)
-    # https://miny.app/u012111465
     # https://www.cnblogs.com/huchong/p/7894860.html
-
+    content = models.CharField(max_length=1000, blank=True, null=True)
+    # https://miny.app/u012111465
+    #content = JSONField(default=None)
+    
+    
 
     def __str__(self):
         return self.title
