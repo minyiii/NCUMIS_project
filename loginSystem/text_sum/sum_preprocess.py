@@ -20,7 +20,7 @@ def get_key (dict_, value):
 # 取得資料
 def get_md():
     # 下面這行之後應該是從資料庫抓，要再改
-    fileread =  open('./misproject_demo/text_sum/text_data/經濟學 CH22 微觀經濟學.md','r', encoding="utf-8")
+    fileread =  open('./loginSystem/text_sum/text_data/經濟學 CH22 微觀經濟學.md','r', encoding="utf-8")
     lines = fileread.readlines() #逐行讀取
     lines_=[]
     for i in lines:
@@ -164,7 +164,7 @@ def get_sum_node():
     sum_node['children']=child_list
     return sum_node
 
-# 遞迴產生json檔案(ver2)
+'''# 遞迴產生json檔案(ver2)
 def get_node_2(index):
     now_node={'text':df_level.loc[index][1],
         'fx':random.uniform(-700, 700),
@@ -198,7 +198,7 @@ def get_sum_node_2():
         child_list.append(ch_node)
 
     sum_node['nodes']=child_list
-    return sum_node
+    return sum_node'''
 
 # 把df_level中level為text的內容抓來做文本摘要，會回傳摘要句子及其在df中的index
 def catch_label():
@@ -254,5 +254,5 @@ if do_textsum:
     # print(sum_index)
 
 # 產生json檔
-with open('./misproject_demo/text_sum/json/0813_test1.json', 'w', encoding='utf-8') as f:
+with open('./loginSystem/text_sum/json/0820_test.json', 'w', encoding='utf-8') as f:
     json.dump(node_dict, f, ensure_ascii=False, separators=(',\n', ': '))
