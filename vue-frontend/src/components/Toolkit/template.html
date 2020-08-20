@@ -10,38 +10,6 @@
     <b-navbar-nav class="m-auto">
       <h3 class="pt-4">Function</h3>
       <p inline>
-        <span>Edit：</span>
-        <button @click="onMoveUp">Move to top</button>
-        <button @click="onMoveDown">Move to bottom</button>
-        <button @click="onRemoveNode">Delete Node</button>
-        <button @click="addImageNode">Add Images</button>
-        <button @click="addNode">Add Node</button><br />
-        <span>Open：</span>
-        <span @click="saveLocalFile">Save as local</span>
-        <span @click="screenshot">Save as images</span><br />
-        <span>Theme：</span>
-        <select @change="set_theme" v-model="theme_value">
-          <option value>default</option>
-          <option value="primary">primary</option>
-          <option value="warning">warning</option>
-          <option value="danger">danger</option>
-          <option value="success">success</option>
-          <option value="info">info</option>
-          <option value="greensea" selected="selected">greensea</option>
-          <option value="nephrite">nephrite</option>
-          <option value="belizehole">belizehole</option>
-          <option value="wisteria">wisteria</option>
-          <option value="asphalt">asphalt</option>
-          <option value="orange">orange</option>
-          <option value="pumpkin">pumpkin</option>
-          <option value="pomegranate">pomegranate</option>
-          <option value="clouds">clouds</option>
-          <option value="asbestos">asbestos</option>
-        </select>
-        <br />
-        <span>Zoom:</span>
-        <span @click="zoomOut" ref="zoomOut">ZoomOut</span>
-        <span @click="zoomIn" ref="zoomIn">ZoomIn</span>
         <i>DOUBLE-CLICK</i> : Edit<br />
         <i>DRAG</i> : Move the node<br />
         <i>ENTER</i> : Add same-level node<br />

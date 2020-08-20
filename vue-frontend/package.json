@@ -14,6 +14,7 @@
     "bootstrap": "^4.5.2",
     "bootstrap-vue": "^2.16.0",
     "vue": "^2.6.11",
+    "vue-image-crop-upload": "^2.5.0",
     "vue-jsmind": "^1.5.0",
     "vue-router": "^3.0.1",
     "vue-scrollto": "^2.18.2"
