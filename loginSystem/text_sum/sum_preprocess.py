@@ -3,6 +3,7 @@ import pandas as pd
 import random, string
 import json
 from textrank4zh import TextRank4Keyword, TextRank4Sentence
+from django.db import models
 
 # ------------------- 要從前端取得的內容 -------------------
 # sub代表li底下的解釋
@@ -17,6 +18,24 @@ select_level = {'h1':True, 'h2':True, 'h3':False, 'text':False, 'li':True, 'sub'
 def get_key (dict_, value):
     return [k for k, v in dict_.items() if v == value]
 
+# 利用django model檔案連接資料庫
+
+'''
+# 測試連接資料庫並從中拿取md檔(改成sqlite寫法)
+conn = psycopg2.connect(database="資料庫名稱", user="使用者名稱", password="資料庫密碼", host="資料庫ip", port="資料庫連接阜")
+    cur1 = conn.cursor() # 查一下在幹嘛
+    
+    sql = "SELECT 想要查的字段 " \
+          "File" # 資料表 
+          "left join 已经爬到的数据表 b " \
+          "on a.关联键1=b.关联键1 and a.关联键2=b.关联键2 WHERE b.关联键1 is null"
+    
+    # 一次拉取所有資料庫數據
+    cur1.execute(sql1)
+    rows = cur1.fetchall() 
+
+    conn.close() #關閉連接
+'''
 # 取得資料
 def get_md():
     # 下面這行之後應該是從資料庫抓，要再改
@@ -219,7 +238,7 @@ def catch_label():
 
     for i in tr4s.get_key_sentences(num = 6): # num = 6 代表輸出最好的6句
         summary.append(i.sentence)
-
+ 
         for j in range(len(sentence)):
             if i.sentence == sentence[j]:
                 summary_index.append(index[j])
