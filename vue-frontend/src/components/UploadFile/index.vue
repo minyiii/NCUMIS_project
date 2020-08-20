@@ -20,6 +20,12 @@ export default {
       footerTextVariant: "danger",
     };
   },
+  // props: {
+  //   text: {
+  //     type: String,
+  //     required: true,
+  //   },
+  // },
   // components: {
   //     Modal
   // },
@@ -27,7 +33,6 @@ export default {
     loadTextFromFile(ev) {
       const file = ev.target.files[0];
       const reader = new FileReader();
-
       reader.onload = (e) => this.$emit("load", e.target.result);
       reader.readAsText(file);
 
@@ -47,7 +52,9 @@ export default {
       ) {
         alert('The file has to be ".md" file!');
       } else {
-        // this.$data.correct = false
+        // console.log(this.file);
+        // console.log(this.text);
+        // alert(this.H2);
       }
     },
   },

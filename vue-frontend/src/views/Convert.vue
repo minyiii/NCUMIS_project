@@ -7,6 +7,7 @@
         <i class="far fa-file-code fa-6x mt-4 mb-5"></i>
         <h3>Preview</h3>
         <textarea rows="10" v-model="text" class="form-control"></textarea>
+        <!-- @click="TextValue" -->
         <h3>Upload</h3>
         <h4>Beware the file has to be ".md" file!</h4>
       </div>
@@ -26,7 +27,20 @@ export default {
   components: {
     VNBar,
     appReader: UploadFile,
+    // props: true,
   },
+  // methods: {
+  //   TextValue() {
+  //     // const getString = (value) => (value || this.text).toString();
+  //     // String(this.text);
+  //     // var symbol = Symbol(this.text);
+  //     // String(symbol);
+  //     // const s = String(this.text);
+  //     // let s = this.text + "";
+  //     // let y = [];
+  //     alert(typeof this.text);
+  //   },
+  // },
 };
 </script>
 

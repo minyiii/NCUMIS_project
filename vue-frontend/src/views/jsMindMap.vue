@@ -3,43 +3,61 @@
   <div class="mindmap">
     <VNBar />
     <div>
-      <span>Edit：</span>
-      <button @click="onMoveUp">Move to top</button>
-      <button @click="onMoveDown">Move to bottom</button>
-      <button @click="onRemoveNode">Delete Node</button>
-      <button @click="addImageNode">Add Images</button>
-      <button @click="addNode">Add Node</button>
-    </div>
-    <div>
-      <span>Save：</span>
-      <button @click="saveLocalFile">Save as local file</button>
-      <button @click="screenshot">Save as images</button>
-    </div>
-    <div>
-      <span>Themes：</span>
-      <select @change="set_theme" v-model="theme_value">
-        <option value>default</option>
-        <option value="primary">primary</option>
-        <option value="warning">warning</option>
-        <option value="danger">danger</option>
-        <option value="success">success</option>
-        <option value="info">info</option>
-        <option value="greensea" selected="selected">greensea</option>
-        <option value="nephrite">nephrite</option>
-        <option value="belizehole">belizehole</option>
-        <option value="wisteria">wisteria</option>
-        <option value="asphalt">asphalt</option>
-        <option value="orange">orange</option>
-        <option value="pumpkin">pumpkin</option>
-        <option value="pomegranate">pomegranate</option>
-        <option value="clouds">clouds</option>
-        <option value="asbestos">asbestos</option>
-      </select>
-    </div>
-    <div>
-      <span>Zoom:</span>
-      <button @click="zoomOut" ref="zoomOut">ZoomOut</button>
-      <button @click="zoomIn" ref="zoomIn">ZoomIn</button>
+      <b-button v-b-toggle:my-collapse variant="outline-dark" class="tool">
+        <div class="when-open">
+          <b-icon icon="arrow-bar-left"></b-icon>
+          <span>Close me</span>
+        </div>
+        <div class="when-closed">
+          <span>Expand me</span>
+          <b-icon icon="arrow-bar-right"></b-icon>
+        </div>
+      </b-button>
+      <b-collapse id="my-collapse" class="toolbox">
+        <b-button-group vertical size="sm" class="btn-group mt-3">
+          <b-dropdown
+            class="mt-2 mb-2"
+            id="dropdown-dropright"
+            dropright
+            text="Theme"
+            size="sm"
+            squared
+            variant="outline-secondary"
+          >
+            <b-dropdown-form style="height:30px;">
+              <b-form-group>
+                <select @change="set_theme" v-model="theme_value">
+                  <option value>default</option>
+                  <option value="primary">primary</option>
+                  <option value="warning">warning</option>
+                  <option value="danger">danger</option>
+                  <option value="success">success</option>
+                  <option value="info">info</option>
+                  <option value="greensea" selected="selected">greensea</option>
+                  <option value="nephrite">nephrite</option>
+                  <option value="belizehole">belizehole</option>
+                  <option value="wisteria">wisteria</option>
+                  <option value="asphalt">asphalt</option>
+                  <option value="orange">orange</option>
+                  <option value="pumpkin">pumpkin</option>
+                  <option value="pomegranate">pomegranate</option>
+                  <option value="clouds">clouds</option>
+                  <option value="asbestos">asbestos</option>
+                </select>
+              </b-form-group>
+            </b-dropdown-form>
+          </b-dropdown>
+          <b-button squared variant="outline-secondary" @click="onMoveUp">Move to top</b-button>
+          <b-button squared variant="outline-secondary" @click="onMoveDown">Move to bottom</b-button>
+          <b-button squared variant="outline-secondary" @click="onRemoveNode">Delete Node</b-button>
+          <b-button squared variant="outline-secondary" @click="addImageNode">Add Images</b-button>
+          <b-button squared variant="outline-secondary" @click="addNode">Add Node</b-button>
+          <b-button squared variant="outline-secondary" @click="saveLocalFile">Save as local file</b-button>
+          <b-button squared variant="outline-secondary" @click="screenshot">Save as images</b-button>
+          <b-button squared variant="outline-secondary" @click="zoomOut" ref="zoomOut">Zoom In</b-button>
+          <b-button squared variant="outline-secondary" @click="zoomIn" ref="zoomIn">Zoom Out</b-button>
+        </b-button-group>
+      </b-collapse>
     </div>
     <div class="mind">
       <js-mind :values="mind" :options="options" ref="jsMind" height="500px"></js-mind>
@@ -314,10 +332,36 @@ export default {
 <style scoped>
 .mindmap {
   width: 100%;
-  height: 140vh;
+  height: 95vh;
   padding-top: 100px;
 }
 .mind {
-  padding: 50px;
+  /* padding-top: 100px; */
+  z-index: 0;
+}
+.collapsed > .when-open,
+.not-collapsed > .when-closed {
+  display: none;
+}
+.tool {
+  position: fixed;
+  top: 75px;
+  left: 30px;
+  box-shadow: none !important;
+  z-index: 1;
+}
+.toolbox {
+  position: fixed;
+  top: 100px;
+  left: 30px;
+  box-shadow: none !important;
+  text-align: left;
+  z-index: 3;
+}
+.toolbox button {
+  width: 150px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  box-shadow: none !important;
 }
 </style>

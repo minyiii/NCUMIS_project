@@ -21,6 +21,9 @@ Vue.config.productionTip = false;
 import jm from "vue-jsmind";
 Vue.use(jm);
 
+// import myUpload from "vue-image-crop-upload/upload-1.vue";
+// Vue.use(myUpload);
+
 /* eslint-disable no-new */
 new Vue({
   el: "#app",
