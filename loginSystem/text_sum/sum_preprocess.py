@@ -2,9 +2,8 @@ import re
 import pandas as pd
 import random, string
 import json
-import os
 from textrank4zh import TextRank4Keyword, TextRank4Sentence
-from django.core.files.uploadedfile import SimpleUploadedFile
+import sqlite3
 
 # ------------------- 要從前端取得的內容 -------------------
 # sub代表li底下的解釋
@@ -18,23 +17,23 @@ select_level = {'h1':True, 'h2':True, 'h3':False, 'text':False, 'li':True, 'sub'
 # 取得
 def get_key (dict_, value):
     return [k for k, v in dict_.items() if v == value]
-
 '''
-# 測試連接資料庫並從中拿取md檔(改成sqlite寫法)
-conn = psycopg2.connect(database="資料庫名稱", user="使用者名稱", password="資料庫密碼", host="資料庫ip", port="資料庫連接阜")
-    cur1 = conn.cursor() # 查一下在幹嘛
-    
-    sql = "SELECT 想要查的字段 " 
-          "File" # 資料表 
-          "left join 已经爬到的数据表 b " 
-          "on a.关联键1=b.关联键1 and a.关联键2=b.关联键2 WHERE b.关联键1 is null"
-    
-    # 一次拉取所有資料庫數據
-    cur1.execute(sql1)
-    rows = cur1.fetchall() 
+# 抓到.md資料(sqlite3版本)
+def download_mdfile():
+    db_name = "資料庫名稱"
+    conn = sqlite3.connect(db_name) #定義資料存取位置
+    c = conn.cursor()
+    print("Opened database successfully")
 
-    conn.close() #關閉連接
-'''
+    #利用select提取資料
+    cursor = c.execute("SELECT content  from jsonContent")
+    for row in cursor: #一行一行row讀取
+        fileread = row[-1]
+    
+    print("Operation done successfully")
+    #conn.close()
+    return fileread
+''' 
 # 取得資料
 def get_md():
     # 下面這行之後應該是從資料庫抓，要再改
@@ -272,13 +271,28 @@ if do_textsum:
     # print(sum_index)
 
 # 產生json檔
-#with open('./loginSystem/text_sum/json/0813_test1.json', 'w', encoding='utf-8') as f:
-json_file = json.dumps(node_dict, ensure_ascii=False, separators=(',\n', ': ')) # 設定接收參數
+json_file = json.dumps(node_dict, ensure_ascii=False, separators=(',\n', ': ')) # 設定接收參數(dump轉換為str型態)
 
-# 把json_file上傳到資料庫
-def upload_jsonfile(self, json_file):
-    f = SimpleUploadedFile('upload.json', json_file)
-    print("succees")
-    print(type(f))
+# 把json_file上傳到資料庫(sqlite3版)
+def upload_file(json_file):
+    db_name = "資料庫名稱"
+    conn = sqlite3.connect(db_name) #定義資料存取位置
+    c = conn.cursor()
+    print("Opened database successfully")
     
-    #f.save
+    # 將json檔存放置資料庫
+    c.execute("INSERT INTO jsonContent content VALUES json_file")
+    conn.commit()
+    print("Records created successfully")
+    c.close()
+
+upload_file(json_file)
+
+# 把json_file上傳到資料庫(照理說是django連接前端和資料庫，但沒辦法做到平行把資料丟到後端吧???)
+'''
+class jsonContent(models.Model):
+    f = SimpleUploadedFile('upload.json', b"json_file")
+    print("成功讀取")
+
+testfile = jsonContent.objects.create(file = f)
+'''
