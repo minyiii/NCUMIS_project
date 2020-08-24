@@ -281,7 +281,7 @@ def upload_file(json_file):
     print("Opened database successfully")
     
     # 將json檔存放置資料庫
-    c.execute("INSERT INTO jsonContent content VALUES json_file")
+    c.execute("INSERT INTO jsonContent(content) VALUES(?)",[json_file]) #設為列表比較不會因為字數問題儲存錯誤
     conn.commit()
     print("Records created successfully")
     c.close()
