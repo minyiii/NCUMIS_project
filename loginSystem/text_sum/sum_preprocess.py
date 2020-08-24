@@ -275,7 +275,7 @@ json_file = json.dumps(node_dict, ensure_ascii=False, separators=(',\n', ': ')) 
 
 # 把json_file上傳到資料庫(sqlite3版)
 def upload_file(json_file):
-    db_name = "資料庫名稱"
+    db_name = "db.sqlite3"
     conn = sqlite3.connect(db_name) #定義資料存取位置
     c = conn.cursor()
     print("Opened database successfully")
