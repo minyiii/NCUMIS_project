@@ -3,6 +3,7 @@ import pandas as pd
 import random, string
 import json
 from textrank4zh import TextRank4Keyword, TextRank4Sentence
+import sqlite3
 
 # ------------------- 要從前端取得的內容 -------------------
 # sub代表li底下的解釋
@@ -16,7 +17,25 @@ select_level = {'h1':True, 'h2':True, 'h3':False, 'text':False, 'li':True, 'sub'
 # 取得
 def get_key (dict_, value):
     return [k for k, v in dict_.items() if v == value]
+'''
+# 抓到.md資料(sqlite3版本)
+def download_mdfile():
+    db_name = "db.sqlite3"
+    conn = sqlite3.connect(db_name) #定義資料存取位置
+    c = conn.cursor()
+    print("Opened database successfully")
+    #cursor = c.execute("create table jsonContent(upload)")
+    #利用select提取資料
+    cursor = c.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         upload from jsonContent")
 
+    upload_testmd = cursor.fetchall()
+    print("Operation done successfully")
+    conn.close()
+    return upload_testmd
+ 
+upload_testmd = download_mdfile()
+print(upload_testmd)
+'''
 # 取得資料
 def get_md():
     # 下面這行之後應該是從資料庫抓，要再改
@@ -219,7 +238,7 @@ def catch_label():
 
     for i in tr4s.get_key_sentences(num = 6): # num = 6 代表輸出最好的6句
         summary.append(i.sentence)
-
+ 
         for j in range(len(sentence)):
             if i.sentence == sentence[j]:
                 summary_index.append(index[j])
@@ -254,5 +273,30 @@ if do_textsum:
     # print(sum_index)
 
 # 產生json檔
-with open('./loginSystem/text_sum/json/0820_test.json', 'w', encoding='utf-8') as f:
-    json.dump(node_dict, f, ensure_ascii=False, separators=(',\n', ': '))
+
+json_file = json.dumps(node_dict, ensure_ascii=False, separators=(',\n', ': ')) # 設定接收參數(dump轉換為str型態)
+
+# 把json_file上傳到資料庫(sqlite3版)
+def upload_file(json_file):
+    db_name = "db.sqlite3"
+    conn = sqlite3.connect(db_name) #定義資料存取位置
+    c = conn.cursor()
+    print("Opened database successfully")
+    
+    # 將json檔存放置資料庫
+    c.execute("INSERT INTO jsonContent(content) VALUES(?)",[json_file]) #設為列表比較不會因為字數問題儲存錯誤
+    conn.commit()
+    print("Records created successfully")
+    c.close()
+
+#upload_file(json_file)
+
+# 把json_file上傳到資料庫(照理說是django連接前端和資料庫，但沒辦法做到平行把資料丟到後端吧???)
+'''
+class jsonContent(models.Model):
+    f = SimpleUploadedFile('upload.json', b"json_file")
+    print("成功讀取")
+
+testfile = jsonContent.objects.create(file = f)
+'''
+>>>>>>> test_data2
