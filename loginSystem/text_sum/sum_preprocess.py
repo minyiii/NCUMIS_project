@@ -17,23 +17,25 @@ select_level = {'h1':True, 'h2':True, 'h3':False, 'text':False, 'li':True, 'sub'
 # 取得
 def get_key (dict_, value):
     return [k for k, v in dict_.items() if v == value]
-
+'''
 # 抓到.md資料(sqlite3版本)
 def download_mdfile():
     db_name = "db.sqlite3"
     conn = sqlite3.connect(db_name) #定義資料存取位置
     c = conn.cursor()
     print("Opened database successfully")
-
+    #cursor = c.execute("create table jsonContent(upload)")
     #利用select提取資料
-    cursor = c.execute("SELECT upload from jsonContent")
+    cursor = c.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         upload from jsonContent")
+
     upload_testmd = cursor.fetchall()
     print("Operation done successfully")
     conn.close()
     return upload_testmd
  
-download_mdfile()
-
+upload_testmd = download_mdfile()
+print(upload_testmd)
+'''
 # 取得資料
 def get_md():
     # 下面這行之後應該是從資料庫抓，要再改
