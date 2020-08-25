@@ -2,8 +2,7 @@
 
     "python.pythonPath": "C:\\Users\\User\\Anaconda3\\envs\\ches40422\\python.exe"
 }
-    "python.pythonPath": "C:\\Users\\a1246\\Anaconda3\\envs\\djangoProject\\python.exe",
-
+    
 
     "python.linting.pylintArgs": [
         "--load-plugins=pylint_django"
@@ -13,3 +12,5 @@
 
     }
 }
+
+>>>>>>> 316d068417c32f67edcc083c3d14eea80bc9ffa1
