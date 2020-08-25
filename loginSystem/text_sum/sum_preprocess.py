@@ -26,14 +26,14 @@ def download_mdfile():
     print("Opened database successfully")
 
     #利用select提取資料
-    cursor = c.execute("SELECT content from jsonContent")
-    for row in cursor: #一行一行row讀取
-        upload_testmd = row[-1]
-    
+    cursor = c.execute("SELECT upload from jsonContent")
+    upload_testmd = cursor.fetchall()
     print("Operation done successfully")
-    #conn.close()
+    conn.close()
     return upload_testmd
  
+download_mdfile()
+
 # 取得資料
 def get_md():
     # 下面這行之後應該是從資料庫抓，要再改
