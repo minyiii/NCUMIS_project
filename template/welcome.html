@@ -96,9 +96,15 @@
     <!-- ======= Hero Section ======= -->
   <section id="hero">
     <div class="hero-container" data-aos="zoom-in" data-aos-delay="100">
-      <h1>WELCOME {{ user }}</></h1>
+      <h1>WELCOME {{ user }}</h1>
+      {% for jsonContent in jsonContents %}
+        <h2> {{ jsonContent.content }} </h2>
+      {% endfor %}
       <a href="#about" class="btn-get-started">Get Started</a>
       <a href="{% url "logout" %}" class="btn-get-started">logout</a>
+
+      
+      
     </div>
   </section><!-- End Hero Section -->
 </body>
