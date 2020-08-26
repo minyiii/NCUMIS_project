@@ -24,12 +24,11 @@ def download_mdfile():
     conn = sqlite3.connect(db_name) #定義資料存取位置
     c = conn.cursor()
     print("Opened database successfully")
-    #cursor = c.execute("create table jsonContent(upload)")
-    #利用select提取資料
-    cursor = c.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         upload from jsonContent")
 
-    upload_testmd = cursor.fetchall()
+    cursor = c.execute("SELECT upload FROM jsonContent")
+    upload_testmd = cursor.fetchone() # 從結果中取一條紀錄，並將游標指向下一條紀錄
     print("Operation done successfully")
+    
     conn.close()
     return upload_testmd
  
