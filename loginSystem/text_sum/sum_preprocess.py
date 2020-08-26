@@ -17,15 +17,14 @@ select_level = {'h1':True, 'h2':True, 'h3':False, 'text':False, 'li':True, 'sub'
 # 取得
 def get_key (dict_, value):
     return [k for k, v in dict_.items() if v == value]
-'''
+
 # 抓到.md資料(sqlite3版本)
 def download_mdfile():
     db_name = "db.sqlite3"
     conn = sqlite3.connect(db_name) #定義資料存取位置
     c = conn.cursor()
     print("Opened database successfully")
-
-    cursor = c.execute("SELECT upload FROM jsonContent")
+    cursor = c.execute("SELECT upload FROM jsonContent") 
     upload_testmd = cursor.fetchone() # 從結果中取一條紀錄，並將游標指向下一條紀錄
     print("Operation done successfully")
     
@@ -34,7 +33,7 @@ def download_mdfile():
  
 upload_testmd = download_mdfile()
 print(upload_testmd)
-'''
+
 # 取得資料
 def get_md():
     # 下面這行之後應該是從資料庫抓，要再改
