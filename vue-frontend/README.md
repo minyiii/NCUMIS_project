@@ -1,4 +1,4 @@
-# vue-frontend
+# vuedemo
 
 > A Vue.js project
 

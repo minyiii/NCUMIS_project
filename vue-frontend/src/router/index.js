@@ -2,6 +2,7 @@ import Vue from "vue";
 import Router from "vue-router";
 import Home from "../views/Home.vue";
 
+
 Vue.use(Router);
 
 export default new Router({
@@ -48,22 +49,52 @@ export default new Router({
         import(/* webpackChunkName: "about" */ "../views/Settings.vue")
     },
     {
-      path: "/jsmindMap",
-      name: "jsMindMap",
-      // route level code-splitting
-      // this generates a separate chunk (about.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () =>
-        import(/* webpackChunkName: "about" */ "../views/jsMindMap.vue")
+      path: "/mindmap",
+      name: "MindMap",
+      component: () => import("../views/MindMap.vue"),
+      // redirect: "/mindmap/mmedit",
+      // children: [
+      //   {
+      //     path: "mmedit",
+      //     name: "MMEdit",
+      //     component: () => import("../views/MMEdit.vue"),
+      //   }
+      // ]
     },
     {
-      path: "/notes",
-      name: "Notes",
+      path: "/mmedit/:index",
+      name: "MMEdit",
       // route level code-splitting
       // this generates a separate chunk (about.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
-      component: () =>
-        import(/* webpackChunkName: "about" */ "../views/Notes.vue")
-    }
+      component: () => import(/* webpackChunkName: "about" */ "../views/MMEdit.vue"),
+    },
+    // {
+    //   path: "/notes",
+    //   name: "Notes",
+    //   // route level code-splitting
+    //   // this generates a separate chunk (about.[hash].js) for this route
+    //   // which is lazy-loaded when the route is visited.
+    //   component: () =>
+    //     import(/* webpackChunkName: "about" */ "../views/Notes.vue")
+    // },
+    // {
+    //   path: "/mdedit",
+    //   name: "MDEdit",
+    //   // route level code-splitting
+    //   // this generates a separate chunk (about.[hash].js) for this route
+    //   // which is lazy-loaded when the route is visited.
+    //   component: () =>
+    //     import(/* webpackChunkName: "about" */ "../views/MDEdit.vue")
+    // },
+    // {
+    //   path: "/originalnote",
+    //   name: "Original-Note",
+    //   // route level code-splitting
+    //   // this generates a separate chunk (about.[hash].js) for this route
+    //   // which is lazy-loaded when the route is visited.
+    //   component: () =>
+    //     import(/* webpackChunkName: "about" */ "../views/Original-Note.vue")
+    // }
   ]
 });
