@@ -10,7 +10,11 @@ class jsonContent(models.Model):
     title = models.CharField(max_length=30)
     upload = models.FileField(upload_to='uploads/')
     # https://www.cnblogs.com/huchong/p/7894860.html
+<<<<<<< HEAD
     content = models.CharField(max_length=1500, blank=True, null=True) # 就是json檔案(若長度僅設定最多1000，很可能會無法讀取json檔案(因為自數可能超過))
+=======
+    content = models.CharField(max_length=1500, blank=True, null=True)
+>>>>>>> beta
     # https://miny.app/u012111465
     #content = JSONField(default=None)
 
