@@ -11,7 +11,7 @@ class jsonContent(models.Model):
     title = models.CharField(max_length=30)
     upload = models.FileField(upload_to='uploads/')
     # https://www.cnblogs.com/huchong/p/7894860.html
-    content = models.CharField(max_length=1000, blank=True, null=True)
+    content = models.CharField(max_length=1500, blank=True, null=True)
     # https://miny.app/u012111465
     #content = JSONField(default=None)
     
