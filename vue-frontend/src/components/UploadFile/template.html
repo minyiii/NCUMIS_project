@@ -1,0 +1,50 @@
+<!-- <div class="upload">
+    <b-form-file accept=".md" v-model="file" ref="file-input" class="mb-2" id="file" @change="loadTextFromFile"></b-form-file>
+    <div class="d-flex justify-content-center align-items-center">
+        <b-button @click="clearFiles" class="mr-2 mt-2">Reset</b-button>
+        <b-button @click="submitFiles" @change="loadTextFromFile" class="mr-2 mt-2">Submit</b-button>
+    </div>
+    <p class="mt-3">Selected file : <b>{{ file ? file.name : '' }}</b></p>
+</div>
+ -->
+<div class="upload">
+  <b-button
+    v-if="correct"
+    v-b-modal.modal-1
+    class="mb-4"
+    variant="outline-danger"
+    @click="submitFiles"
+  >Start Convert</b-button>
+  <b-button
+    v-else
+    disabled
+    v-b-modal.modal-1
+    class="mb-4"
+    variant="outline-danger"
+    @click="submitFiles"
+  >Start Convert</b-button>
+  <div class="d-flex">
+    <b-form-file
+      type="file"
+      v-model="file"
+      @change="loadTextFromFile"
+      ref="file-input"
+      accept=".md"
+    ></b-form-file>
+    <b-button
+      @click="clearFiles"
+      class="ml-2"
+      style="width:100px; height: 35px; margin-top: 2px;"
+    >Reset</b-button>
+
+    <!-- <b-button @click="submitFiles" class="mr-2 mt-4 mb-2">Start</b-button> -->
+    <!-- <b-button class="mr-2 mt-4 mb-2 w-50" v-if="correct" @click="show=true">
+      Start
+    </b-button>
+    <b-button class="mr-2 mt-4 mb-2 w-50" v-else disabled>
+      Start
+    </b-button> -->
+  </div>
+
+  <p class="mt-3">Selected file : <b>{{ file ? file.name : '' }}</b></p>
+</div>

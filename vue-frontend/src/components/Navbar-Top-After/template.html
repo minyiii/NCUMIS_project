@@ -1,0 +1,66 @@
+<b-navbar toggleable="lg" type="light" variant="white" fixed="top">
+  <b-navbar-brand to="/" id="btn0">
+    <img
+      src="https://placekitten.com/g/30/30"
+      class="d-inline-block align-top"
+      alt="Kitten"
+    />
+    KeyInMind
+  </b-navbar-brand>
+
+  <b-navbar-toggle target="navbar-toggle-collapse">
+    <template v-slot:default="{ expanded }">
+      <b-icon v-if="expanded" icon="chevron-bar-up"></b-icon>
+      <b-icon v-else icon="chevron-bar-down"></b-icon>
+    </template>
+  </b-navbar-toggle>
+
+  <b-collapse id="navbar-toggle-collapse" is-nav>
+    <b-navbar-nav class="ml-auto">
+      <b-nav-item to="/" class="nav-link px-4">Info</b-nav-item>
+      <b-nav-item to="/" class="nav-link px-4">About</b-nav-item>
+      <b-nav-item to="/" class="nav-link px-4">Contact</b-nav-item>
+      <b-nav-item to="/" class="nav-link px-4">Support</b-nav-item>
+      <b-nav-item
+        v-if="$router.history.current['path'] !=='/login'"
+        to="/login"
+        class="nav-link px-4"
+        >Login</b-nav-item
+      >
+      <b-nav-item
+        v-else="$router.history.current['path'] =='/login'"
+        to="/"
+        class="nav-link px-4"
+        >/Back
+      </b-nav-item>
+    </b-navbar-nav>
+  </b-collapse>
+</b-navbar>
+
+<!-- 
+<nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+    <a class="navbar-brand px-3" href="index2.html">KeyInMind</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#list" aria-controls="list" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="list">
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+                <router-link to="/" class="nav-link px-4">Info</router-link>
+            </li>
+            <li class="nav-item">
+                <router-link to="/" class="nav-link px-4">About</router-link>
+            </li>
+            <li class="nav-item">
+                <router-link to="/" class="nav-link px-4">Contact</router-link>
+            </li>
+            <li class="nav-item">
+                <router-link to="/" class="nav-link px-4">Support</router-link>
+            </li>
+            <li class="nav-item">
+                <router-link to="/login" class="nav-link px-4">Login</router-link>
+            </li>                
+        </ul>
+    </div>
+</nav> -->
