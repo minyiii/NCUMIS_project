@@ -3,7 +3,7 @@ import pandas as pd
 import random, string
 import json
 from textrank4zh import TextRank4Keyword, TextRank4Sentence
-import sqlite3
+import psycopg2
 
 # ------------------- 要從前端取得的內容 -------------------
 # sub代表li底下的解釋
@@ -17,25 +17,22 @@ select_level = {'h1':True, 'h2':True, 'h3':False, 'text':False, 'li':True, 'sub'
 # 取得
 def get_key (dict_, value):
     return [k for k, v in dict_.items() if v == value]
-'''
-# 抓到.md資料(sqlite3版本)
+
+# 抓到.md資料(progresql版本)
 def download_mdfile():
-    db_name = "db.sqlite3"
-    conn = sqlite3.connect(db_name) #定義資料存取位置
+    #db_name = "postgres"
+    conn = psycopg2.connect(database="postgres", user="postgres", password="misG6_5PEN", host="127.0.0.1", port=5432)
     c = conn.cursor()
     print("Opened database successfully")
-    #cursor = c.execute("create table jsonContent(upload)")
-    #利用select提取資料
-    cursor = c.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         upload from jsonContent")
-
-    upload_testmd = cursor.fetchall()
+    cursor = c.execute("SELECT upload FROM jsonContent") 
+    upload_testmd = cursor.fetchone() # 從結果中取一條紀錄，並將游標指向下一條紀錄
     print("Operation done successfully")
+    
     conn.close()
     return upload_testmd
  
-upload_testmd = download_mdfile()
-print(upload_testmd)
-'''
+#upload_testmd = download_mdfile()
+
 # 取得資料
 def get_md():
     # 下面這行之後應該是從資料庫抓，要再改
@@ -278,8 +275,8 @@ json_file = json.dumps(node_dict, ensure_ascii=False, separators=(',\n', ': ')) 
 
 # 把json_file上傳到資料庫(sqlite3版)
 def upload_file(json_file):
-    db_name = "db.sqlite3"
-    conn = sqlite3.connect(db_name) #定義資料存取位置
+    #db_name = "db.sqlite3"
+    conn = psycopg2.connect(database="postgres", user="postgres", password="misG6_5PEN", host="127.0.0.1", port=5432) #定義資料存取位置
     c = conn.cursor()
     print("Opened database successfully")
     
