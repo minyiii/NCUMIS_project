@@ -1,0 +1,12 @@
+.upload {
+  margin: auto;
+  padding: 35px;
+  text-align: center;
+  width: 50vw;
+  /* height: 20vh; */
+}
+
+.upload .btn:hover {
+  border: 1px solid rgb(241, 96, 96);
+  background: rgb(241, 96, 96);
+}
