@@ -3,7 +3,7 @@ import re
 import random, string
 import json
 from textrank4zh import TextRank4Keyword, TextRank4Sentence
-import sqlite3
+import psycopg2
 
 # ------------------- 要從前端取得的內容 -------------------
 # sub代表li底下的解釋
@@ -18,10 +18,10 @@ select_level = {'h1':True, 'h2':True, 'h3':False, 'text':False, 'li':True, 'sub'
 def get_key (dict_, value):
     return [k for k, v in dict_.items() if v == value]
 
-# 抓到.md資料(sqlite3版本)
+# 抓到.md資料(progresql版本)
 def download_mdfile():
-    db_name = "db.sqlite3"
-    conn = sqlite3.connect(db_name) #定義資料存取位置
+    #db_name = "postgres"
+    conn = psycopg2.connect(database="postgres", user="postgres", password="misG6_5PEN", host="127.0.0.1", port=5432)
     c = conn.cursor()
     print("Opened database successfully")
     cursor = c.execute("SELECT upload FROM jsonContent") 
@@ -32,7 +32,6 @@ def download_mdfile():
     return upload_testmd
  
 upload_testmd = download_mdfile()
-print(upload_testmd)
 
 # 取得資料
 def get_md():
