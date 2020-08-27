@@ -1,4 +1,9 @@
-<b-navbar toggleable="lg" type="light" variant="light" fixed="top">
+<b-navbar
+  toggleable="lg"
+  type="light"
+  variant="light"
+  fixed="top"
+>
   <b-navbar-brand to="/">
     <img
       src="https://placekitten.com/g/30/30"
@@ -18,20 +23,48 @@
   >
     <b-icon icon="justify"></b-icon>
   </b-button>
-  <b-sidebar id="navbar" right shadow>
+  <b-sidebar
+    id="navbar"
+    right
+    shadow
+  >
     <template v-slot:default="{ hide }">
       <div class="p-3">
         <!-- <h4 id="sidebar-no-header-title">Custom header sidebar</h4> -->
         <nav class="mb-3">
           <b-nav vertical>
-            <b-button variant="light" block to="/convert">Convert</b-button>
-            <b-button variant="light" block to="/jsmindMap">MindMap</b-button>
-            <b-button variant="light" block to="/Notes">Notes</b-button>
-            <b-button variant="light" block to="/settings">Settings</b-button>
-            <b-button variant="light" block to="/">Logout</b-button>
+            <b-button
+              variant="light"
+              block
+              to="/convert"
+            >Convert</b-button>
+            <b-button
+              variant="light"
+              block
+              to="/mindmap"
+            >MindMap</b-button>
+            <!-- <b-button
+              variant="light"
+              block
+              to="/notes"
+            >Notes</b-button> -->
+            <b-button
+              variant="light"
+              block
+              to="/settings"
+            >Settings</b-button>
+            <b-button
+              variant="light"
+              block
+              to="/"
+            >Logout</b-button>
           </b-nav>
         </nav>
-        <b-button variant="info" block @click="hide">Close Sidebar</b-button>
+        <b-button
+          variant="info"
+          block
+          @click="hide"
+        >Close Sidebar</b-button>
       </div>
     </template>
   </b-sidebar>

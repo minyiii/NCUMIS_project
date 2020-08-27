@@ -21,12 +21,23 @@ Vue.config.productionTip = false;
 import jm from "vue-jsmind";
 Vue.use(jm);
 
+// var editor = require('./editor.vue');
+import mavonEditor from 'mavon-editor'
+import 'mavon-editor/dist/css/index.css'
+// use
+Vue.use(mavonEditor)
+
+// Vue.filter("marked", function(input) {
+//   return marked(input);
+// });
+
 // import myUpload from "vue-image-crop-upload/upload-1.vue";
 // Vue.use(myUpload);
 
 /* eslint-disable no-new */
 new Vue({
   el: "#app",
+  // render: h => h(editor),
   router,
   components: { App },
   template: "<App/>"

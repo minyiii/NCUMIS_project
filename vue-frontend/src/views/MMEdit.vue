@@ -70,6 +70,7 @@
 // @ is an alias to /src
 import VNBar from "@/components/Navbar-Top-New/index.vue";
 import Toolkit from "@/components/Toolkit/index.vue";
+
 export default {
   name: "mindmap",
   components: {

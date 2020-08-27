@@ -8,106 +8,43 @@
 </div>
  -->
 <div class="upload">
-  <b-form-file
-    type="file"
-    v-model="file"
-    @change="loadTextFromFile"
-    ref="file-input"
-    accept=".md"
-  ></b-form-file>
+  <b-button
+    v-if="correct"
+    v-b-modal.modal-1
+    class="mb-4"
+    variant="outline-danger"
+    @click="submitFiles"
+  >Start Convert</b-button>
+  <b-button
+    v-else
+    disabled
+    v-b-modal.modal-1
+    class="mb-4"
+    variant="outline-danger"
+    @click="submitFiles"
+  >Start Convert</b-button>
   <div class="d-flex">
-    <b-button @click="clearFiles" class="mr-2 mt-4 mb-2 w-50">Reset</b-button>
+    <b-form-file
+      type="file"
+      v-model="file"
+      @change="loadTextFromFile"
+      ref="file-input"
+      accept=".md"
+    ></b-form-file>
+    <b-button
+      @click="clearFiles"
+      class="ml-2"
+      style="width:100px; height: 35px; margin-top: 2px;"
+    >Reset</b-button>
+
     <!-- <b-button @click="submitFiles" class="mr-2 mt-4 mb-2">Start</b-button> -->
-    <b-button class="mr-2 mt-4 mb-2 w-50" v-if="correct" @click="show=true">
+    <!-- <b-button class="mr-2 mt-4 mb-2 w-50" v-if="correct" @click="show=true">
       Start
     </b-button>
-
     <b-button class="mr-2 mt-4 mb-2 w-50" v-else disabled>
       Start
-    </b-button>
-
-    <b-modal
-      v-model="show"
-      title="Choose Your Node Levels"
-      :header-bg-variant="headerBgVariant"
-      :header-text-variant="headerTextVariant"
-      :body-bg-variant="bodyBgVariant"
-      :body-text-variant="bodyTextVariant"
-      :footer-bg-variant="footerBgVariant"
-      :footer-text-variant="footerTextVariant"
-    >
-      <template>
-        <div class="w-100">
-          <p variant="danger">
-            Select the node levels you would like to show on the MindMap!
-          </p>
-        </div>
-      </template>
-      <b-container fluid>
-        <b-row class="mb-1 text-center">
-          <b-col cols="4"></b-col>
-          <b-col>Node Level</b-col>
-        </b-row>
-
-        <b-row class="mb-1">
-          <b-col cols="4">H2</b-col>
-          <b-col>
-            <b-form-select v-model="H2" :options="variants"></b-form-select>
-          </b-col>
-        </b-row>
-
-        <b-row class="mb-1">
-          <b-col cols="4">H3</b-col>
-          <b-col>
-            <b-form-select v-model="H3" :options="variants"></b-form-select>
-          </b-col>
-        </b-row>
-
-        <b-row>
-          <b-col cols="4">H4</b-col>
-          <b-col>
-            <b-form-select v-model="H4" :options="variants"></b-form-select>
-          </b-col>
-        </b-row>
-
-        <b-row>
-          <b-col cols="4">Paragraph</b-col>
-          <b-col>
-            <b-form-select
-              v-model="Paragraph"
-              :options="variants"
-            ></b-form-select>
-          </b-col>
-        </b-row>
-
-        <b-row>
-          <!-- @load="$emit('TextValue')" -->
-          <b-button
-            block
-            variant="outline-danger"
-            class="mt-3 w-100"
-            @click="submitFiles"
-            >Submit</b-button
-          >
-        </b-row>
-      </b-container>
-
-      <template v-slot:modal-footer>
-        <div class="w-100">
-          <b-button
-            variant="primary"
-            size="sm"
-            class="float-right"
-            @click="show=false"
-          >
-            Cancel
-          </b-button>
-        </div>
-      </template>
-    </b-modal>
+    </b-button> -->
   </div>
-  <!-- <Modal @click.native="submitFiles" class="mr-2 mt-4 mb-2 w-50"></Modal> -->
-  <!-- </div> -->
 
   <p class="mt-3">Selected file : <b>{{ file ? file.name : '' }}</b></p>
 </div>
