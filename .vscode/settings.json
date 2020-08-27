@@ -2,7 +2,7 @@
 
     "python.pythonPath": "C:\\anaconda_workspace\\envs\\myproject_env\\python.exe",
 
-    
+
     "python.linting.pylintArgs": [
         "--load-plugins=pylint_django"
     ],

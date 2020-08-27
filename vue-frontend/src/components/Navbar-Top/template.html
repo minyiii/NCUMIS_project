@@ -1,0 +1,50 @@
+<b-navbar toggleable="lg" type="light" variant="white" fixed="top">
+  <b-navbar-brand v-scroll-to="{ el: '#section0'}" id="btn0">
+    <img
+      src="https://placekitten.com/g/30/30"
+      class="d-inline-block align-top"
+      alt="Kitten"
+    />
+    KeyInMind
+  </b-navbar-brand>
+  <b-navbar-toggle target="navbar-toggle-collapse">
+    <template v-slot:default="{ expanded }">
+      <b-icon v-if="expanded" icon="chevron-bar-up"></b-icon>
+      <b-icon v-else icon="chevron-bar-down"></b-icon>
+    </template>
+  </b-navbar-toggle>
+  <b-collapse id="navbar-toggle-collapse" is-nav>
+    <b-navbar-nav class="ml-auto">
+      <b-nav-item
+        v-scroll-to="{ el: '#section1', offset: -30 }"
+        id="btn1"
+        class="nav-link px-4"
+        >Info</b-nav-item
+      >
+      <b-nav-item
+        v-scroll-to="{ el: '#section2', offset: -30 }"
+        id="btn2"
+        class="nav-link px-4"
+        >About</b-nav-item
+      >
+      <b-nav-item
+        v-scroll-to="{ el: '#section3', offset: -30 }"
+        id="btn3"
+        class="nav-link px-4"
+        >Contact</b-nav-item
+      >
+      <b-nav-item
+        v-scroll-to="{ el: '#section4', offset: -30 }"
+        id="btn4"
+        class="nav-link px-4"
+        >Support</b-nav-item
+      >
+      <b-nav-item to="/login" id="btn5" class="nav-link px-4">Login</b-nav-item>
+      <!-- <b-nav-item href="#section1" id="btn1" class="nav-link px-4">Info</b-nav-item>
+        <b-nav-item href="#section2" id="btn2" class="nav-link px-4">About</b-nav-item>
+        <b-nav-item href="#section3" id="btn3" class="nav-link px-4">Contact</b-nav-item>
+        <b-nav-item href="#section4" id="btn4" class="nav-link px-4">Support</b-nav-item>
+        <b-nav-item to="/login" id="btn5" class="nav-link px-4">Login</b-nav-item> -->
+    </b-navbar-nav>
+  </b-collapse>
+</b-navbar>

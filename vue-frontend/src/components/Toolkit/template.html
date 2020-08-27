@@ -1,0 +1,21 @@
+<b-navbar toggleable type="black" fixed="bottom">
+  <b-navbar-toggle target="tlkit">
+    <template v-slot:default="{ expanded }">
+      <b-icon v-if="expanded" icon="chevron-bar-up"></b-icon>
+      <b-icon v-else icon="chevron-bar-down"></b-icon>
+    </template>
+  </b-navbar-toggle>
+
+  <b-collapse id="tlkit" is-nav>
+    <b-navbar-nav class="m-auto">
+      <h3 class="pt-4">Function</h3>
+      <p inline>
+        <i>DOUBLE-CLICK</i> : Edit<br />
+        <i>DRAG</i> : Move the node<br />
+        <i>ENTER</i> : Add same-level node<br />
+        <i>TAB</i> : Add child<br />
+        <i>DEL</i> : Delete node<br />
+      </p>
+    </b-navbar-nav>
+  </b-collapse>
+</b-navbar>

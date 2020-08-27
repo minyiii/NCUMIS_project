@@ -1,0 +1,17 @@
+.navbar {
+  width: 500px;
+  /* display: flex; */
+  /* justify-content: center; */
+  text-align: center;
+  bottom: 50px;
+}
+button {
+  width: 50px;
+  background: #dbe6eb;
+}
+
+.navbar-collapse {
+  /* width: 320px; */
+  border-radius: 0.5rem;
+  background: #ffdbcd;
+}
