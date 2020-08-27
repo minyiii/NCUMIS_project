@@ -31,7 +31,7 @@ def download_mdfile():
     conn.close()
     return upload_testmd
  
-upload_testmd = download_mdfile()
+#upload_testmd = download_mdfile()
 
 # 取得資料
 def get_md():
@@ -274,8 +274,8 @@ json_file = json.dumps(node_dict, ensure_ascii=False, separators=(',\n', ': ')) 
 
 # 把json_file上傳到資料庫(sqlite3版)
 def upload_file(json_file):
-    db_name = "db.sqlite3"
-    conn = sqlite3.connect(db_name) #定義資料存取位置
+    #db_name = "db.sqlite3"
+    conn = psycopg2.connect(database="postgres", user="postgres", password="misG6_5PEN", host="127.0.0.1", port=5432) #定義資料存取位置
     c = conn.cursor()
     print("Opened database successfully")
     
