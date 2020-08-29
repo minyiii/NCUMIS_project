@@ -3,10 +3,42 @@
   padding: 35px;
   text-align: center;
   width: 50vw;
-  /* height: 20vh; */
 }
-
+.upload .box{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.upload .custom-file{
+  width: 100vw;
+  overflow: hidden;
+}
+.btn-reset{
+  width:100px; 
+  height: 35px; 
+  margin-top: 1px;
+}
 .upload .btn:hover {
   border: 1px solid rgb(241, 96, 96);
   background: rgb(241, 96, 96);
+}
+@media screen and (max-width:600px){
+  .upload .box{
+    display: block;
+  }
+  .upload .custom-file{
+    width: 100%;
+  }
+  .btn-reset{
+    margin-top: 20px;
+    margin-bottom: 10px;
+  }
+}
+@media screen and (max-width: 400px) {
+  .upload {
+    width: 100vw;
+  }
+  .upload .custom-file{
+    width: 100%;
+  }
 }

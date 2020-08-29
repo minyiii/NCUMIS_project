@@ -68,6 +68,7 @@
 
 <script>
 // @ is an alias to /src
+import MY_JSON from "./data.json";
 import VNBar from "@/components/Navbar-Top-New/index.vue";
 import Toolkit from "@/components/Toolkit/index.vue";
 
@@ -80,54 +81,30 @@ export default {
   data() {
     return {
       theme_value: "",
-      mind: {
-        /* 元数据，定义思维导图的名称、作者、版本等信息 */
-        meta: {
-          name: "example",
-          author: "906106844@qq.com",
-          version: "0.2",
-        },
-        /* 数据格式声明 */
-        format: "node_array",
-        /* 数据内容 */
-        data: [
-          { id: "root", isroot: true, topic: "jsMind" },
-
-          { id: "easy", parentid: "root", topic: "Easy", direction: "left" },
-          { id: "easy1", parentid: "easy", topic: "Easy to show" },
-          { id: "easy2", parentid: "easy", topic: "Easy to edit" },
-          { id: "easy3", parentid: "easy", topic: "Easy to store" },
-          { id: "easy4", parentid: "easy", topic: "Easy to embed" },
-
-          {
-            id: "open",
-            parentid: "root",
-            topic: "Open Source",
-            expanded: false,
-            direction: "right",
-          },
-          { id: "open1", parentid: "open", topic: "on GitHub" },
-          { id: "open2", parentid: "open", topic: "BSD License" },
-
-          {
-            id: "powerful",
-            parentid: "root",
-            topic: "Powerful",
-            direction: "right",
-          },
-          {
-            id: "powerful1",
-            parentid: "powerful",
-            topic: "Base on Javascript",
-          },
-          { id: "powerful2", parentid: "powerful", topic: "Base on HTML5" },
-          { id: "powerful3", parentid: "powerful", topic: "Depends on you" },
-        ],
-      },
+      mind: MY_JSON,
       options: {
-        // mode:'side'
+        view: {
+          line_width: 1, // 思维导图线条的粗细
+        },
       },
-      shortCutVal: "",
+      shortCutVal: {
+        enable: true, // whether to enable shortcut
+        handles: {
+          // save: function (jm, e) {},
+        }, // Named shortcut key event processor
+        mapping: {
+          // shortcut key mapping
+          addchild: 9, // <Insert>
+          addbrother: 13, // <Enter>
+          editnode: 113, // <F2>
+          delnode: 46, // <Delete>
+          toggle: 32, // <Space>
+          left: 37, // <Left>
+          up: 38, // <Up>
+          right: 39, // <Right>
+          down: 40, // <Down>
+        },
+      },
       keyCode: "",
     };
   },
@@ -187,8 +164,8 @@ export default {
             var topic = undefined;
             var data = {
               "background-image": reader.result,
-              width: "100",
-              height: "100",
+              width: "200",
+              height: "160",
             };
             var node = _this.jm.add_node(selected_node, nodeid, topic, data);
           };
@@ -232,7 +209,7 @@ export default {
       var mind_data = this.jm.get_data();
       var mind_name = mind_data.meta.name;
       var mind_str = jsMind.util.json.json2string(mind_data);
-      jsMind.util.file.save(mind_str, "text/jsmind", mind_name + ".jm");
+      jsMind.util.file.save(mind_str, "text/jsmind", mind_name + ".json");
     },
     fontSize() {
       var selected_id = this.get_selected_nodeid();

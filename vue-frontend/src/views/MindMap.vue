@@ -4,11 +4,37 @@
     <b-container>
       <h3>MindMap</h3>
       <b-row class="pt-3 pb-3" align-h="start">
-        <b-col cols="4" class="pb-3" v-for="item in file" :key="item.name">
-          <b-button class="content" variant="light" :to="{path: '/mmedit/' + item.index}">
-            {{item.name}}
+        <b-col cols="4" class="pb-3" v-for="(item,index) in file" :key="item.name">
+          <b-button
+            class="content"
+            variant="light"
+            :to="{path: '/mmedit/' + index}"
+            style="z-index:0;"
+          >
+            <h5>{{item.name}}</h5>
             <p>{{item.describe}}</p>
           </b-button>
+          <div class="d-flex justify-content-center">
+            <b-button class="m-3 btn-edit" size="sm" v-b-modal="modalId(index)">Edit</b-button>
+            <b-modal :id="'modal' + index" title="Edit Your Description" centered>
+              <b-form-textarea
+                id="textarea-plaintext"
+                :value="item.describe"
+                v-model="item.describe"
+              ></b-form-textarea>
+              <template v-slot:modal-footer>
+                <b-button size="sm" variant="info" @click="save(item)">Save</b-button>
+              </template>
+            </b-modal>
+            <b-button class="m-3 btn-edit" size="sm" v-b-modal="modalId2(index)">Delete</b-button>
+            <b-modal :id="'modal' + index + index" size="sm" hide-header centered>
+              <h5>Are you sure?</h5>
+              <template v-slot:modal-footer="{ cancel }">
+                <b-button variant="danger" size="sm" @click="removeItem(item)">Yes</b-button>
+                <b-button variant="secondary" size="sm" @click="cancel">No</b-button>
+              </template>
+            </b-modal>
+          </div>
         </b-col>
       </b-row>
     </b-container>
@@ -25,37 +51,46 @@ export default {
     return {
       file: [
         {
-          index: 1,
           name: "Example.md",
-          describe: "you are a nerd",
+          describe: "you are a nerd !!!",
         },
         {
-          index: 2,
           name: "Example2.md",
           describe: "aa",
         },
         {
-          index: 3,
           name: "Example3.md",
-          describe: "s",
+          describe: "sada",
         },
         {
-          index: 4,
           name: "Example4.md",
-          describe: "s",
+          describe: "424",
         },
         {
-          index: 5,
           name: "Example5.md",
-          describe: "s",
+          describe: "235",
         },
         {
-          index: 6,
           name: "Example6.md",
-          describe: "s",
+          describe: "adad",
         },
       ],
     };
+  },
+  methods: {
+    modalId(i) {
+      return "modal" + i;
+    },
+    modalId2(i) {
+      return "modal" + i + i;
+    },
+    save(item) {
+      // alert(this.file.indexOf(item) + 1);
+      alert(this.file[this.file.indexOf(item)].describe);
+    },
+    removeItem: function (item) {
+      this.file.splice(this.file.indexOf(item), 1);
+    },
   },
   computed: {},
 };
@@ -68,21 +103,26 @@ export default {
   width: 80%;
   /* height: 600px; */
 }
+.btn-edit {
+  width: 30%;
+}
 .content {
   width: 250px;
-  height: 250px;
+  height: 200px;
+  padding: 50px;
+  padding-top: 70px;
   overflow: hidden;
 }
 .content p {
-  width: 220px;
+  width: 150px;
+  height: 55px;
   text-align: left;
-  margin-bottom: 0px;
+  margin-bottom: 20px;
   font-size: smaller;
   word-wrap: break-word;
-  padding-top: 20px;
-  padding-left: 20px;
-  padding-right: 20px;
-  /* background-color: red; */
+  padding-top: 15px;
+  padding-left: 15px;
+  padding-right: 15px;
   color: rgb(97, 97, 97);
   overflow: hidden;
 }

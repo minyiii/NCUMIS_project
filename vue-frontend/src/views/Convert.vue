@@ -54,12 +54,12 @@
             </b-col>
           </b-row>
 
-          <b-row>
+          <!-- <b-row>
             <b-col cols="4" class="mt-1">H4</b-col>
             <b-col>
               <b-form-select class="mb-1" v-model="H4" :options="variants"></b-form-select>
             </b-col>
-          </b-row>
+          </b-row>-->
 
           <b-row>
             <b-col cols="4" class="mt-1">Paragraph</b-col>
@@ -106,7 +106,6 @@ export default {
       // true false
       H2: "yes",
       H3: "yes",
-      H4: "yes",
       Paragraph: "yes",
       Summary: "yes",
       headerBgVariant: "dark",
@@ -159,5 +158,21 @@ export default {
   width: 30vw;
   margin-bottom: 30px;
   height: 50px;
+}
+@media screen and (max-width: 600px) {
+  .convert {
+    height: 120vh;
+  }
+  .target-container .box {
+    width: 80vw;
+  }
+}
+@media screen and (max-width: 400px) {
+  .convert {
+    height: 150vh;
+  }
+  .target-container .box {
+    width: 60vw;
+  }
 }
 </style>
