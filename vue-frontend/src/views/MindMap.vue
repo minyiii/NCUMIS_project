@@ -4,7 +4,7 @@
     <b-container>
       <h3>MindMap</h3>
       <b-row class="pt-3 pb-3" align-h="start">
-        <b-col cols="4" class="pb-3" v-for="(item,index) in file" :key="item.name">
+        <b-col cols="12" sm="6" md="4" class="pb-3" v-for="(item,index) in file" :key="item.name">
           <b-button
             class="content"
             variant="light"
@@ -15,7 +15,7 @@
             <p>{{item.describe}}</p>
           </b-button>
           <div class="d-flex justify-content-center">
-            <b-button class="m-3 btn-edit" size="sm" v-b-modal="modalId(index)">Edit</b-button>
+            <b-button class="ml-2 mr-2 mt-2 btn-edit" size="sm" v-b-modal="modalId(index)">Edit</b-button>
             <b-modal :id="'modal' + index" title="Edit Your Description" centered>
               <b-form-textarea
                 id="textarea-plaintext"
@@ -26,7 +26,7 @@
                 <b-button size="sm" variant="info" @click="save(item)">Save</b-button>
               </template>
             </b-modal>
-            <b-button class="m-3 btn-edit" size="sm" v-b-modal="modalId2(index)">Delete</b-button>
+            <b-button class="ml-2 mr-2 mt-2 btn-edit" size="sm" v-b-modal="modalId2(index)">Delete</b-button>
             <b-modal :id="'modal' + index + index" size="sm" hide-header centered>
               <h5>Are you sure?</h5>
               <template v-slot:modal-footer="{ cancel }">
@@ -125,5 +125,27 @@ export default {
   padding-right: 15px;
   color: rgb(97, 97, 97);
   overflow: hidden;
+}
+@media screen and (max-width: 1024px) {
+  #mindmapview {
+    height: 100vh;
+  }
+  .content {
+    width: 200px;
+    height: 160px;
+    padding: 30px;
+    padding-top: 45px;
+  }
+  .btn-edit {
+    width: 100px;
+  }
+}
+@media screen and (max-width: 760px) {
+  #mindmapview {
+    height: auto;
+  }
+  .btn-edit {
+    width: 80px;
+  }
 }
 </style>

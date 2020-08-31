@@ -2,6 +2,54 @@
 <template>
   <div class="mindmap">
     <VNBar />
+    <div class="phone-tool">
+      <b-button-group size="sm" class="btn-group mt-3">
+        <b-dropdown class="mt-2 mb-2" id="dropdown-dropright" text="Theme" size="sm">
+          <b-dropdown-form style="height:30px;">
+            <b-form-group>
+              <select @change="set_theme" v-model="theme_value">
+                <option value>default</option>
+                <option value="primary">primary</option>
+                <option value="warning">warning</option>
+                <option value="danger">danger</option>
+                <option value="success">success</option>
+                <option value="info">info</option>
+                <option value="greensea" selected="selected">greensea</option>
+                <option value="nephrite">nephrite</option>
+                <option value="belizehole">belizehole</option>
+                <option value="wisteria">wisteria</option>
+                <option value="asphalt">asphalt</option>
+                <option value="orange">orange</option>
+                <option value="pumpkin">pumpkin</option>
+                <option value="pomegranate">pomegranate</option>
+                <option value="clouds">clouds</option>
+                <option value="asbestos">asbestos</option>
+              </select>
+            </b-form-group>
+          </b-dropdown-form>
+        </b-dropdown>
+      </b-button-group>
+      <b-button-group size="sm" class="btn-group mt-3">
+        <b-button @click="addNode" title="Add Node">
+          <b-icon icon="file-plus"></b-icon>
+        </b-button>
+        <b-button @click="onRemoveNode" title="Del Node">
+          <b-icon icon="file-minus"></b-icon>
+        </b-button>
+        <b-button @click="addImageNode" title="Add Img">
+          <b-icon icon="camera"></b-icon>
+        </b-button>
+        <b-button @click="screenshot" title="Save Img">
+          <b-icon icon="cloud-download"></b-icon>
+        </b-button>
+        <b-button @click="zoomIn" ref="zoomIn" title="Zoom In">
+          <b-icon icon="zoom-in"></b-icon>
+        </b-button>
+        <b-button @click="zoomOut" ref="zoomOut" title="Zoom Out">
+          <b-icon icon="zoom-out"></b-icon>
+        </b-button>
+      </b-button-group>
+    </div>
     <div>
       <b-button v-b-toggle:my-collapse variant="outline-dark" class="tool">
         <div class="when-open">
@@ -89,12 +137,9 @@ export default {
       },
       shortCutVal: {
         enable: true, // whether to enable shortcut
-        handles: {
-          // save: function (jm, e) {},
-        }, // Named shortcut key event processor
         mapping: {
           // shortcut key mapping
-          addchild: 9, // <Insert>
+          addchild: 9, // <Insert> <Tab>
           addbrother: 13, // <Enter>
           editnode: 113, // <F2>
           delnode: 46, // <Delete>
@@ -105,7 +150,6 @@ export default {
           down: 40, // <Down>
         },
       },
-      keyCode: "",
     };
   },
   mounted() {
@@ -313,6 +357,9 @@ export default {
   height: 95vh;
   padding-top: 100px;
 }
+.phone-tool {
+  display: none;
+}
 .mind {
   /* padding-top: 100px; */
   z-index: 0;
@@ -341,5 +388,22 @@ export default {
   margin-top: 10px;
   margin-bottom: 10px;
   box-shadow: none !important;
+}
+@media screen and (max-height: 540px) {
+  .mindmap {
+    height: auto;
+  }
+}
+@media screen and (max-width: 760px) {
+  .tool {
+    display: none;
+  }
+  .phone-tool {
+    display: block;
+    text-align: center;
+    position: fixed;
+    top: 50px;
+    left: 10px;
+  }
 }
 </style>
