@@ -3,6 +3,7 @@ import pandas as pd
 import random, string
 import json
 from textrank4zh import TextRank4Keyword, TextRank4Sentence
+import psycopg2
 
 # ------------------- 要從前端取得的內容 -------------------
 # sub代表li底下的解釋
@@ -17,10 +18,25 @@ select_level = {'h1':True, 'h2':True, 'h3':False, 'text':False, 'li':True, 'sub'
 def get_key (dict_, value):
     return [k for k, v in dict_.items() if v == value]
 
+# 抓到.md資料(progresql版本)
+def download_mdfile():
+    #db_name = "postgres"
+    conn = psycopg2.connect(database="postgres", user="postgres", password="misG6_5PEN", host="127.0.0.1", port=5432)
+    c = conn.cursor()
+    print("Opened database successfully")
+    cursor = c.execute("SELECT upload FROM jsonContent") 
+    upload_testmd = cursor.fetchone() # 從結果中取一條紀錄，並將游標指向下一條紀錄
+    print("Operation done successfully")
+    
+    conn.close()
+    return upload_testmd
+ 
+#upload_testmd = download_mdfile()
+
 # 取得資料
 def get_md():
     # 下面這行之後應該是從資料庫抓，要再改
-    fileread =  open('./misproject_demo/text_sum/text_data/經濟學 CH22 微觀經濟學.md','r', encoding="utf-8")
+    fileread =  open('./loginSystem/text_sum/text_data/經濟學 CH22 微觀經濟學.md','r', encoding="utf-8")
     lines = fileread.readlines() #逐行讀取
     lines_=[]
     for i in lines:
@@ -164,7 +180,7 @@ def get_sum_node():
     sum_node['children']=child_list
     return sum_node
 
-# 遞迴產生json檔案(ver2)
+'''# 遞迴產生json檔案(ver2)
 def get_node_2(index):
     now_node={'text':df_level.loc[index][1],
         'fx':random.uniform(-700, 700),
@@ -198,7 +214,7 @@ def get_sum_node_2():
         child_list.append(ch_node)
 
     sum_node['nodes']=child_list
-    return sum_node
+    return sum_node'''
 
 # 把df_level中level為text的內容抓來做文本摘要，會回傳摘要句子及其在df中的index
 def catch_label():
@@ -219,7 +235,7 @@ def catch_label():
 
     for i in tr4s.get_key_sentences(num = 6): # num = 6 代表輸出最好的6句
         summary.append(i.sentence)
-
+ 
         for j in range(len(sentence)):
             if i.sentence == sentence[j]:
                 summary_index.append(index[j])
@@ -254,5 +270,30 @@ if do_textsum:
     # print(sum_index)
 
 # 產生json檔
-with open('./misproject_demo/text_sum/json/0813_test1.json', 'w', encoding='utf-8') as f:
-    json.dump(node_dict, f, ensure_ascii=False, separators=(',\n', ': '))
+
+json_file = json.dumps(node_dict, ensure_ascii=False, separators=(',\n', ': ')) # 設定接收參數(dump轉換為str型態)
+
+# 把json_file上傳到資料庫(sqlite3版)
+def upload_file(json_file):
+    #db_name = "db.sqlite3"
+    conn = psycopg2.connect(database="postgres", user="postgres", password="misG6_5PEN", host="127.0.0.1", port=5432) #定義資料存取位置
+    c = conn.cursor()
+    print("Opened database successfully")
+    
+    # 將json檔存放置資料庫
+    c.execute("INSERT INTO jsonContent(content) VALUES(?)",[json_file]) #設為列表比較不會因為字數問題儲存錯誤
+    conn.commit()
+    print("Records created successfully")
+    c.close()
+
+#upload_file(json_file)
+
+# 把json_file上傳到資料庫(照理說是django連接前端和資料庫，但沒辦法做到平行把資料丟到後端吧???)
+'''
+class jsonContent(models.Model):
+    f = SimpleUploadedFile('upload.json', b"json_file")
+    print("成功讀取")
+
+testfile = jsonContent.objects.create(file = f)
+'''
+

@@ -1,0 +1,43 @@
+.section {
+  height: 100vh;
+}
+.section h1 {
+  padding-top: 20px;
+}
+p {
+  text-indent: 36px;
+}
+/* ------------------------------------------
+                   Page Top
+-------------------------------------------- */
+#section0 {
+  /* padding-top: 100px; */
+  background-image: url("image.png");
+  background-position: top;
+  background-size: 100%; /*頁面背景縮放*/
+}
+/* ------------------------------------------
+                    Page 4
+-------------------------------------------- */
+#section4 {
+  /* height: 60vh; */
+  margin: auto;
+}
+/* ------------------------------------------
+                    Page 5
+-------------------------------------------- */
+/* #section5{
+    height: 40vh;
+    margin: auto; 
+}
+#section5 .shape{
+    margin: auto;
+    width: 100px;
+    height: 100px;
+    border-radius: 100%;
+    cursor: pointer;
+}
+#section5 .shape:hover{
+    transform: scale(1.2, 1.2);
+    transition: .5s;
+} */

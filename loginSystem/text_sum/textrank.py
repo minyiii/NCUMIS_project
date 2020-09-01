@@ -1,10 +1,10 @@
 from textrank4zh import TextRank4Keyword, TextRank4Sentence
 import os
 
-# print('路徑: ',os.getcwd())
+print('路徑: ',os.getcwd())
 
 # 開啟檔案
-with open('./misproject_demo/text_sum/text_data/textrank4zh_data.txt','r', encoding='utf-8') as f:  #打开读取test.txt
+with open('./loginSystem/text_sum/text_data/textrank4zh_data.txt','r', encoding='utf-8') as f:  #打开读取test.txt
     test_text = f.read()
 
 # 抓取關鍵詞
