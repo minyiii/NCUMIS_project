@@ -27,6 +27,11 @@ import 'mavon-editor/dist/css/index.css'
 // use
 Vue.use(mavonEditor)
 
+import axios from 'axios'
+import VueAxios from 'vue-axios'
+Vue.use(VueAxios, axios)
+Vue.prototype.$axios = axios;
+
 // Vue.filter("marked", function(input) {
 //   return marked(input);
 // });

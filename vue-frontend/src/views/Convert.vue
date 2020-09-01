@@ -54,12 +54,12 @@
             </b-col>
           </b-row>
 
-          <b-row>
+          <!-- <b-row>
             <b-col cols="4" class="mt-1">H4</b-col>
             <b-col>
               <b-form-select class="mb-1" v-model="H4" :options="variants"></b-form-select>
             </b-col>
-          </b-row>
+          </b-row>-->
 
           <b-row>
             <b-col cols="4" class="mt-1">Paragraph</b-col>
@@ -102,13 +102,12 @@ export default {
       file: null,
       correct: false,
       show: false,
-      variants: ["yes", "no"],
+      variants: ["Yes", "No"],
       // true false
-      H2: "yes",
-      H3: "yes",
-      H4: "yes",
-      Paragraph: "yes",
-      Summary: "yes",
+      H2: "Yes",
+      H3: "Yes",
+      Paragraph: "Yes",
+      Summary: "Yes",
       headerBgVariant: "dark",
       headerTextVariant: "light",
       bodyBgVariant: "light",
@@ -120,10 +119,29 @@ export default {
   components: {
     VNBar,
     appReader: UploadFile,
-    // props: true,
+  },
+  created() {
+    // 幫我去拿這個api的位置，然後回來的response;
+    this.$axios.get("http://localhost:8081/#/convert").then((res) => {
+      console.log(res);
+    });
   },
   methods: {
     TextValue() {
+      // this.$axios
+      //   .post("http://localhost:8081/#/convert", {
+      //     H2: this.H2,
+      //     H3: this.H3,
+      //     Paragraph: this.Paragraph,
+      //     Summary: this.Summary,
+      //   })
+      //   .then((res) => {
+      //     console.log(res);
+      //   })
+      //   .catch((error) => {
+      //     consoli.log(error);
+      //   });
+
       console.log(this.text);
       console.log(this.H2);
       console.log(this.H3);
@@ -159,5 +177,21 @@ export default {
   width: 30vw;
   margin-bottom: 30px;
   height: 50px;
+}
+@media screen and (max-width: 600px) {
+  .convert {
+    height: 120vh;
+  }
+  .target-container .box {
+    width: 80vw;
+  }
+}
+@media screen and (max-width: 400px) {
+  .convert {
+    height: 150vh;
+  }
+  .target-container .box {
+    width: 60vw;
+  }
 }
 </style>
