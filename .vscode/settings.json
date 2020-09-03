@@ -1,6 +1,6 @@
 {
 
-    "python.pythonPath": "C:\\anaconda_workspace\\envs\\myproject_env\\python.exe",
+    "python.pythonPath": "c:\\anaconda_workspace\\envs\\djangoProject\\python.exe",
 
 
     "python.linting.pylintArgs": [

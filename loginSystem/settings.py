@@ -18,7 +18,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TEMPLATE_DIR = os.path.join(BASE_DIR,'template')
 STATIC_DIR = os.path.join(BASE_DIR,'static')
 MEDIA_ROOT = os.path.join(BASE_DIR, 'upload/')
-MEDIA_URL = '/upload/' 
+MEDIA_URL = '/upload/'
 
 
 # Quick-start development settings - unsuitable for production
@@ -39,13 +39,14 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'loginSystem',
     'authenticate_app',
+    'text_summary',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles'
-    
+
 ]
 
 MIDDLEWARE = [
