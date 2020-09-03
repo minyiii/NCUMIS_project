@@ -35,7 +35,8 @@ def convert(request):
 
         # 有上傳檔案且檔案類型為.md
         # if 'mdfile' in request.POST:
-        if mdfile.
+        # if mdfile.
+        if True:
             json_file = mm_execute(author, mdfile, select_level, do_textsum)
             return render_to_response('MMEdit.html',{'blog': blog})
         else: # 沒上傳檔案

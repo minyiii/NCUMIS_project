@@ -35,7 +35,6 @@ def download_mdfile():
 #print(upload_testmd)
 
 
->>>>>>> develop
 # 取得資料
 def get_md():
     # 下面這行之後應該是從資料庫抓，要再改
