@@ -46,7 +46,7 @@ export default {
 <style scoped>
 .login {
   width: 100%;
-  height: 92vh;
+  height: 100vh;
 }
 .box {
   margin: auto;
@@ -78,5 +78,20 @@ h2 {
   margin-top: 30px;
   margin-bottom: 30px;
   text-align: left;
+}
+@media screen and (max-width: 760px) {
+  .login {
+    height: 110vh;
+  }
+  .box {
+    width: 70%;
+    height: 70%;
+    margin-bottom: 30px;
+  }
+}
+@media screen and (max-height: 500px) {
+  .login {
+    height: 170vh;
+  }
 }
 </style>

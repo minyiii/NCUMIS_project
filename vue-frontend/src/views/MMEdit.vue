@@ -2,6 +2,54 @@
 <template>
   <div class="mindmap">
     <VNBar />
+    <div class="phone-tool">
+      <b-button-group size="sm" class="btn-group mt-3">
+        <b-dropdown class="mt-2 mb-2" id="dropdown-dropright" text="Theme" size="sm">
+          <b-dropdown-form style="height:30px;">
+            <b-form-group>
+              <select @change="set_theme" v-model="theme_value">
+                <option value>default</option>
+                <option value="primary">primary</option>
+                <option value="warning">warning</option>
+                <option value="danger">danger</option>
+                <option value="success">success</option>
+                <option value="info">info</option>
+                <option value="greensea" selected="selected">greensea</option>
+                <option value="nephrite">nephrite</option>
+                <option value="belizehole">belizehole</option>
+                <option value="wisteria">wisteria</option>
+                <option value="asphalt">asphalt</option>
+                <option value="orange">orange</option>
+                <option value="pumpkin">pumpkin</option>
+                <option value="pomegranate">pomegranate</option>
+                <option value="clouds">clouds</option>
+                <option value="asbestos">asbestos</option>
+              </select>
+            </b-form-group>
+          </b-dropdown-form>
+        </b-dropdown>
+      </b-button-group>
+      <b-button-group size="sm" class="btn-group mt-3">
+        <b-button @click="addNode" title="Add Node">
+          <b-icon icon="file-plus"></b-icon>
+        </b-button>
+        <b-button @click="onRemoveNode" title="Del Node">
+          <b-icon icon="file-minus"></b-icon>
+        </b-button>
+        <b-button @click="addImageNode" title="Add Img">
+          <b-icon icon="camera"></b-icon>
+        </b-button>
+        <b-button @click="screenshot" title="Save Img">
+          <b-icon icon="cloud-download"></b-icon>
+        </b-button>
+        <b-button @click="zoomIn" ref="zoomIn" title="Zoom In">
+          <b-icon icon="zoom-in"></b-icon>
+        </b-button>
+        <b-button @click="zoomOut" ref="zoomOut" title="Zoom Out">
+          <b-icon icon="zoom-out"></b-icon>
+        </b-button>
+      </b-button-group>
+    </div>
     <div>
       <b-button v-b-toggle:my-collapse variant="outline-dark" class="tool">
         <div class="when-open">
@@ -68,6 +116,7 @@
 
 <script>
 // @ is an alias to /src
+import MY_JSON from "./data.json";
 import VNBar from "@/components/Navbar-Top-New/index.vue";
 import Toolkit from "@/components/Toolkit/index.vue";
 
@@ -80,55 +129,27 @@ export default {
   data() {
     return {
       theme_value: "",
-      mind: {
-        /* 元数据，定义思维导图的名称、作者、版本等信息 */
-        meta: {
-          name: "example",
-          author: "906106844@qq.com",
-          version: "0.2",
-        },
-        /* 数据格式声明 */
-        format: "node_array",
-        /* 数据内容 */
-        data: [
-          { id: "root", isroot: true, topic: "jsMind" },
-
-          { id: "easy", parentid: "root", topic: "Easy", direction: "left" },
-          { id: "easy1", parentid: "easy", topic: "Easy to show" },
-          { id: "easy2", parentid: "easy", topic: "Easy to edit" },
-          { id: "easy3", parentid: "easy", topic: "Easy to store" },
-          { id: "easy4", parentid: "easy", topic: "Easy to embed" },
-
-          {
-            id: "open",
-            parentid: "root",
-            topic: "Open Source",
-            expanded: false,
-            direction: "right",
-          },
-          { id: "open1", parentid: "open", topic: "on GitHub" },
-          { id: "open2", parentid: "open", topic: "BSD License" },
-
-          {
-            id: "powerful",
-            parentid: "root",
-            topic: "Powerful",
-            direction: "right",
-          },
-          {
-            id: "powerful1",
-            parentid: "powerful",
-            topic: "Base on Javascript",
-          },
-          { id: "powerful2", parentid: "powerful", topic: "Base on HTML5" },
-          { id: "powerful3", parentid: "powerful", topic: "Depends on you" },
-        ],
-      },
+      mind: MY_JSON,
       options: {
-        // mode:'side'
+        view: {
+          line_width: 1, // 思维导图线条的粗细
+        },
       },
-      shortCutVal: "",
-      keyCode: "",
+      shortCutVal: {
+        enable: true, // whether to enable shortcut
+        mapping: {
+          // shortcut key mapping
+          addchild: 9, // <Insert> <Tab>
+          addbrother: 13, // <Enter>
+          editnode: 113, // <F2>
+          delnode: 46, // <Delete>
+          toggle: 32, // <Space>
+          left: 37, // <Left>
+          up: 38, // <Up>
+          right: 39, // <Right>
+          down: 40, // <Down>
+        },
+      },
     };
   },
   mounted() {
@@ -187,8 +208,8 @@ export default {
             var topic = undefined;
             var data = {
               "background-image": reader.result,
-              width: "100",
-              height: "100",
+              width: "200",
+              height: "160",
             };
             var node = _this.jm.add_node(selected_node, nodeid, topic, data);
           };
@@ -232,7 +253,7 @@ export default {
       var mind_data = this.jm.get_data();
       var mind_name = mind_data.meta.name;
       var mind_str = jsMind.util.json.json2string(mind_data);
-      jsMind.util.file.save(mind_str, "text/jsmind", mind_name + ".jm");
+      jsMind.util.file.save(mind_str, "text/jsmind", mind_name + ".json");
     },
     fontSize() {
       var selected_id = this.get_selected_nodeid();
@@ -336,6 +357,9 @@ export default {
   height: 95vh;
   padding-top: 100px;
 }
+.phone-tool {
+  display: none;
+}
 .mind {
   /* padding-top: 100px; */
   z-index: 0;
@@ -364,5 +388,22 @@ export default {
   margin-top: 10px;
   margin-bottom: 10px;
   box-shadow: none !important;
+}
+@media screen and (max-height: 540px) {
+  .mindmap {
+    height: auto;
+  }
+}
+@media screen and (max-width: 760px) {
+  .tool {
+    display: none;
+  }
+  .phone-tool {
+    display: block;
+    text-align: center;
+    position: fixed;
+    top: 50px;
+    left: 10px;
+  }
 }
 </style>

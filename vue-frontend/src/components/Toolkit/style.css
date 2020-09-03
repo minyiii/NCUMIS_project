@@ -15,3 +15,9 @@ button {
   border-radius: 0.5rem;
   background: #ffdbcd;
 }
+
+@media screen and (max-width: 760px)  {
+  .navbar{
+    display: none;
+  }
+}

@@ -3,7 +3,7 @@
     <VBar />
     <div class="login">
       <div class="box p-4">
-        <router-link to="/convert">Convert</router-link>
+        <!-- <router-link to="/convert">Convert</router-link> -->
         <h2>Register</h2>
         <form action>
           <div class="form-group">
@@ -82,5 +82,30 @@ h2 {
   margin-top: 30px;
   margin-bottom: 30px;
   text-align: left;
+}
+@media screen and (max-width: 760px) {
+  .login {
+    height: 150vh;
+  }
+  .box {
+    width: 80%;
+    height: 80%;
+    margin-bottom: 30px;
+  }
+}
+@media screen and (max-height: 540px) {
+  .login {
+    height: 230vh;
+  }
+}
+@media screen and (max-height: 360px) {
+  .login {
+    height: 260vh;
+  }
+}
+@media screen and (max-height: 280px) {
+  .login {
+    height: 300vh;
+  }
 }
 </style>
