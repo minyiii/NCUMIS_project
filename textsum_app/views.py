@@ -44,8 +44,8 @@ def convert(request):
     else:
         return render_to_response('convert.html',locals())
 
-# 顯示整個工作區
-def shownotes(request):
+# # 顯示整個工作區
+# def shownotes(request):
 
 
 # 從工作區開一個檔案
