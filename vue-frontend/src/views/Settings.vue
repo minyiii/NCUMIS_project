@@ -32,7 +32,10 @@
           class="mt-3"
           style="overflow: hidden; width:350px"
         ></b-form-file>
-        <b-button @click="resetFiles" style="width:350px">Reset Images</b-button>
+        <b-row class="pl-5 pr-5">
+          <b-button @click="submitFiles" class="w-50">Submit</b-button>
+          <b-button @click="resetFiles" class="w-50">Reset Images</b-button>
+        </b-row>
       </div>
     </div>
   </div>
@@ -79,6 +82,7 @@ export default {
         this.show = true;
       });
     },
+    //以上是表單上傳的功能，下面是照片上傳功能
     UploadImages(e) {
       const image = e.target.files[0];
       const reader = new FileReader();
@@ -86,6 +90,23 @@ export default {
       reader.onload = (e) => {
         this.photo = e.target.result;
       };
+    },
+    submitFiles() {
+      //這裡是要測試的地方
+      let formData = new FormData();
+      formData.append("file", this.file);
+      this.$axios
+        .post("http://localhost:3000/contents", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        })
+        .then(function () {
+          console.log("SUCCESS!!");
+        })
+        .catch(function () {
+          console.log("FAILURE!!");
+        });
     },
     resetFiles() {
       this.photo =

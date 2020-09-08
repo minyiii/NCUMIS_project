@@ -1,20 +1,18 @@
 .section {
   height: 100vh;
 }
-.section h1 {
-  padding-top: 20px;
-}
 p {
-  text-indent: 36px;
+  /* text-indent: 36px; */
+  text-indent: 10px;
 }
 /* ------------------------------------------
                    Page Top
 -------------------------------------------- */
 #section0 {
-  /* padding-top: 100px; */
-  background-image: url("image.png");
-  background-position: top;
-  background-size: 100%; /*頁面背景縮放*/
+  background-image: url("image2.png");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 95%; 
 }
 /* ------------------------------------------
                     Page 4
