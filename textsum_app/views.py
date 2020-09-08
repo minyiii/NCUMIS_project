@@ -1,12 +1,15 @@
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from textsum_app.models import jsonContent
+from django.conf import settings
+from . import models
 import re
 import pandas as pd
 import random, string
 import json
 from textrank4zh import TextRank4Keyword, TextRank4Sentence
 import psycopg2
+import sqlite3
 
 # ------------------- 要從前端取得的內容 -------------------
 # sub代表li底下的解釋
@@ -17,10 +20,11 @@ level_num = {'h1':5, 'h2':4, 'h3':3, 'text':2, 'li':1, 'sub':0}
 
 # ------------------- request -------------------
 # V；上傳檔案以進行轉換
-def convert(request):
-    select_level = {'h1':True, 'h2':True, 'h3':False, 'text':False, 'li':True, 'sub':True}
-    if request.user.is_authenticated: # 有登入才能上傳
+def upload(request):
+    if request.method == "POST":
+        # if request.user.is_authenticated: # 有登入才能上傳
         author = request.user
+        select_level = {'h1':True, 'h2':True, 'h3':False, 'text':False, 'li':True, 'sub':True}
         try:
             select_level['h2'] = request.POST['H2']
             select_level['h3'] = request.POST['H3']
@@ -34,9 +38,11 @@ def convert(request):
             mmid = mm_execute(author, mdfile, select_level, do_textsum)
             # ------------ 下面這部分不太確定(mmdeit.html已經寫了 這還要寫嗎) ------------
             j = jsonContent.objects.get(id=mmid) # 從DB撈
-            return render_to_response('mmedit.html', {'mmid':mmid, 'j':j})
-
-    return render_to_response('convert.html')
+            # return render_to_response('mmedit.html', {'mmid':mmid, 'j':j})
+            return render(request, 'mmedit.html', {'mmid':mmid, 'j':j})
+    # return render_to_response('.html')
+    return render(request, 'convert.html')
+    return redirect('/upload')
 
 # V；顯示編輯心智圖畫面；透過網址傳入mmid->去DB撈->回傳json檔；失敗回傳mindmap頁面
 def mmedit(request, mmid):
@@ -49,6 +55,7 @@ def mmedit(request, mmid):
             return render(request, 'mindmap.html')
     return render(request, 'login.html')
 
+'''
 # 第二版，連同儲存json檔也寫進去
 def mmedit2(request, mmid):
     if request.user.is_authenticated:
@@ -128,7 +135,7 @@ def update_json(request, mmid):
                 message = '更新失敗'
 
             return render(request, 'mmedit.html', locals())
-    return render(request, 'login.html')
+    return render(request, 'login.html')'''
 
 '''# 刪除心智圖
 def delete(request, del_id):
@@ -434,4 +441,3 @@ class jsonContent(models.Model):
 
 testfile = jsonContent.objects.create(file = f)
 '''
-
