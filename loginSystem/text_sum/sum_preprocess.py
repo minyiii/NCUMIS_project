@@ -24,14 +24,16 @@ def download_mdfile():
     conn = psycopg2.connect(database="postgres", user="postgres", password="misG6_5PEN", host="127.0.0.1", port=5432)
     c = conn.cursor()
     print("Opened database successfully")
-    cursor = c.execute("SELECT upload FROM jsonContent") 
+    cursor = c.execute("SELECT upload FROM jsonContent")
     upload_testmd = cursor.fetchone() # 從結果中取一條紀錄，並將游標指向下一條紀錄
     print("Operation done successfully")
-    
+
     conn.close()
     return upload_testmd
- 
+
 #upload_testmd = download_mdfile()
+#print(upload_testmd)
+
 
 # 取得資料
 def get_md():
@@ -148,9 +150,12 @@ def remove_title(s):
 
 # 遞迴產生json檔案(ver1)
 def get_node(index):
-    now_node={'id':''.join(random.choice(string.ascii_letters) for x in range(5)),
+    now_node={'id':''.join(random.choice(string.ascii_letters) for x in range(6)),
             'topic':df_level.loc[index][1]}
     child_list=[]
+
+    if index==0:
+        now_node['id']='root'
 
     # now_node['topic']=df_level.loc[index][1]
     for i in range(index, len(df_level)): # 只有後方的句子才可能為子節點，不用整個df都查
@@ -168,12 +173,12 @@ def get_node(index):
 
 # 取得摘要的節點(ver1)
 def get_sum_node():
-    sum_node={'id':''.join(random.choice(string.ascii_letters) for x in range(5)),
+    sum_node={'id':''.join(random.choice(string.ascii_letters) for x in range(6)),
             'topic':'摘要'}
     child_list=[]
 
     for i in sum: # 只有後方的句子才可能為子節點，不用整個df都查
-        ch_node={'id':''.join(random.choice(string.ascii_letters) for x in range(5)),
+        ch_node={'id':''.join(random.choice(string.ascii_letters) for x in range(6)),
             'topic':i}
         child_list.append(ch_node)
 
@@ -235,7 +240,7 @@ def catch_label():
 
     for i in tr4s.get_key_sentences(num = 6): # num = 6 代表輸出最好的6句
         summary.append(i.sentence)
- 
+
         for j in range(len(sentence)):
             if i.sentence == sentence[j]:
                 summary_index.append(index[j])
@@ -269,9 +274,17 @@ if do_textsum:
     # node_dict['nodes'].append(get_sum_node_2())
     # print(sum_index)
 
-# 產生json檔
+meta_dict = {"name":"jsMind remote",
+            "author":"hizzgdev@163.com",
+            "version":"0.2"}
 
-json_file = json.dumps(node_dict, ensure_ascii=False, separators=(',\n', ': ')) # 設定接收參數(dump轉換為str型態)
+json_dict = {'meta':meta_dict,
+            'format':"node_tree",
+            'data':node_dict}
+
+# 產生json檔
+json_file = json.dumps(json_dict, ensure_ascii=False, separators=(',\n', ': ')) # 設定接收參數(dump轉換為str型態)
+
 
 # 把json_file上傳到資料庫(sqlite3版)
 def upload_file(json_file):
@@ -279,14 +292,14 @@ def upload_file(json_file):
     conn = psycopg2.connect(database="postgres", user="postgres", password="misG6_5PEN", host="127.0.0.1", port=5432) #定義資料存取位置
     c = conn.cursor()
     print("Opened database successfully")
-    
+
     # 將json檔存放置資料庫
     c.execute("INSERT INTO jsonContent(content) VALUES(?)",[json_file]) #設為列表比較不會因為字數問題儲存錯誤
     conn.commit()
     print("Records created successfully")
     c.close()
 
-#upload_file(json_file)
+upload_file(json_file)
 
 # 把json_file上傳到資料庫(照理說是django連接前端和資料庫，但沒辦法做到平行把資料丟到後端吧???)
 '''
