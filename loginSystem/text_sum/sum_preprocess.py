@@ -1,9 +1,10 @@
 import re
-#import pandas as pd
+import pandas as pd
 import random, string
 import json
 from textrank4zh import TextRank4Keyword, TextRank4Sentence
 import psycopg2
+import sqlite3
 
 # ------------------- 要從前端取得的內容 -------------------
 # sub代表li底下的解釋
@@ -19,24 +20,24 @@ def get_key (dict_, value):
     return [k for k, v in dict_.items() if v == value]
 
 # 抓到.md資料(progresql版本)
-def download_mdfile():
+def download_mdfile(author_id): #要跟前端要id
     #db_name = "postgres"
     conn = psycopg2.connect(database="postgres", user="postgres", password="misG6_5PEN", host="127.0.0.1", port=5432)
     c = conn.cursor()
     print("Opened database successfully")
-    cursor = c.execute("SELECT upload FROM jsonContent") 
+    cursor = c.execute("SELECT upload FROM jsonContent WHERE author = '%s'",id) 
     upload_testmd = cursor.fetchone() # 從結果中取一條紀錄，並將游標指向下一條紀錄
     print("Operation done successfully")
     
     conn.close()
     return upload_testmd
  
-#upload_testmd = download_mdfile()
+#upload_testmd = download_mdfile(id)
 
 # 取得資料
 def get_md():
     # 下面這行之後應該是從資料庫抓，要再改
-    fileread =  open('./loginSystem/text_sum/text_data/經濟學 CH22 微觀經濟學.md','r', encoding="utf-8")
+    fileread =  open('./loginSystem/text_sum/text_data/澳洲銀行業傳將買更多政府債券、為刺激法案提供資金.md','r', encoding="utf-8")
     lines = fileread.readlines() #逐行讀取
     lines_=[]
     for i in lines:
@@ -270,12 +271,16 @@ if do_textsum:
     # print(sum_index)
 
 # 產生json檔
-json_file = json.dumps(node_dict, ensure_ascii=False, separators=(',\n', ': ')) # 設定接收參數(dump轉換為str型態)
+#json_file = json.dumps(node_dict, ensure_ascii=False, separators=(',\n', ': ')) # 設定接收參數(dump轉換為str型態)
+with open('./loginSystem/text_sum/json/0909_test3.json','w',encoding="utf-8") as f:
+     json.dump(node_dict, f,ensure_ascii=False, separators=(',\n', ': '))
+
 
 # 把json_file上傳到資料庫(sqlite3版)
-def upload_file(json_file):
-    #db_name = "db.sqlite3"
-    conn = psycopg2.connect(database="postgres", user="postgres", password="misG6_5PEN", host="127.0.0.1", port=5432) #定義資料存取位置
+def upload_file(json_file,id):
+    db_name = "db.sqlite3"
+    conn = sqlite3.connect(db_name) #定義資料存取位置
+    #conn = psycopg2.connect(database="postgres", user="postgres", password="misG6_5PEN", host="127.0.0.1", port=5432) #定義資料存取位置
     c = conn.cursor()
     print("Opened database successfully")
     
@@ -283,9 +288,15 @@ def upload_file(json_file):
     c.execute("INSERT INTO jsonContent(content) VALUES(?)",[json_file]) #設為列表比較不會因為字數問題儲存錯誤
     conn.commit()
     print("Records created successfully")
-    c.close()
 
-#upload_file(json_file)
+    # 取得id
+    #cursor = c.execute("SELECT id FROM jsonContent WHERE content = '%s'", json_file) #若json為剛剛上傳的那分，就抓id
+    #mind_id = cursor.fetchone()
+    c.close()
+    
+    #return mind_id
+
+#upload_file(json_file,id)
 
 # 把json_file上傳到資料庫(照理說是django連接前端和資料庫，但沒辦法做到平行把資料丟到後端吧???)
 '''
