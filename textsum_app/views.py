@@ -35,43 +35,12 @@ def upload(request):
             mdfile = NULL
 
         if mdfile!=NULL: # 若有上傳檔案，開啟編輯畫面
-            mmid = mm_execute(author, mdfile, select_level, do_textsum)
-            # ------------ 下面這部分不太確定(mmdeit.html已經寫了 這還要寫嗎) ------------
-            j = jsonContent.objects.get(id=mmid) # 從DB撈
+            json_file = mm_execute(author, mdfile, select_level, do_textsum)
             # return render_to_response('mmedit.html', {'mmid':mmid, 'j':j})
-            return render(request, 'mmedit.html', {'mmid':mmid, 'j':j})
+            return render(request, 'mmedit.html', {'mmid':mmid, 'json_file':json_file})
     # return render_to_response('.html')
     return render(request, 'convert.html')
     return redirect('/upload')
-
-# V；顯示編輯心智圖畫面；透過網址傳入mmid->去DB撈->回傳json檔；失敗回傳mindmap頁面
-def mmedit(request, mmid):
-    if request.user.is_authenticated:
-        try:
-            # ------------- 這裡的var name再去對照前端的 -------------
-            j = jsonContent.objects.get(id=mmid) # 從DB撈
-            return render(request, 'mmedit.html', locals())
-        except:
-            return render(request, 'mindmap.html')
-    return render(request, 'login.html')
-
-'''
-# 第二版，連同儲存json檔也寫進去
-def mmedit2(request, mmid):
-    if request.user.is_authenticated:
-        if request.method == "POST":
-            try:
-                jsonContent.objects.filter(id=mmid).update(upload=request.POST['json'])
-                message = '更新成功'
-            except:
-                message = '更新失敗'
-        try:
-            # ------------- 這裡的var name再去對照前端的 -------------
-            j = jsonContent.objects.get(id=mmid) # 從DB撈
-            return render(request, 'mmedit.html', locals())
-        except:
-            return render(request, 'mindmap.html')
-    return render(request, 'login.html')
 
 # V；顯示整個工作區；回傳該作者的所有心智圖(可能為空)
 def mindmap(request):
@@ -119,6 +88,35 @@ def mindmap(request):
 
             return render(request, 'mindmap.html', {'jsonContents':jsonContents})
 
+    return render(request, 'login.html')
+
+'''# V；顯示編輯心智圖畫面；透過網址傳入mmid->去DB撈->回傳json檔；失敗回傳mindmap頁面
+def mmedit(request, mmid):
+    if request.user.is_authenticated:
+        try:
+            # ------------- 這裡的var name再去對照前端的 -------------
+            j = jsonContent.objects.get(id=mmid) # 從DB撈
+            return render(request, 'mmedit.html', locals())
+        except:
+            return render(request, 'mindmap.html')
+    return render(request, 'login.html')'''
+
+'''
+# 第二版，連同儲存json檔也寫進去
+def mmedit2(request, mmid):
+    if request.user.is_authenticated:
+        if request.method == "POST":
+            try:
+                jsonContent.objects.filter(id=mmid).update(upload=request.POST['json'])
+                message = '更新成功'
+            except:
+                message = '更新失敗'
+        try:
+            # ------------- 這裡的var name再去對照前端的 -------------
+            j = jsonContent.objects.get(id=mmid) # 從DB撈
+            return render(request, 'mmedit.html', locals())
+        except:
+            return render(request, 'mindmap.html')
     return render(request, 'login.html')
 
 
@@ -248,6 +246,7 @@ def pre_remove(s):
     s_ = s_.replace('>','')
     s_ = s_.replace('!','')
     s_ = s_.replace('[]','')
+    s_ = s_.replace('==','')
 
     pos = find_substr(s_, '~~')
     if pos:
@@ -359,9 +358,10 @@ def catch_label():
     return summary, summary_index
 
 # 把json_file上傳到資料庫(sqlite3版)
-def upload_file(json_file):
+def upload_file(json_file, author_id):
     #db_name = "db.sqlite3"
-    conn = psycopg2.connect(database="postgres", user="postgres", password="misG6_5PEN", host="127.0.0.1", port=5432) #定義資料存取位置
+    #conn = psycopg2.connect(database="postgres", user="postgres", password="misG6_5PEN", host="127.0.0.1", port=5432) #定義資料存取位置
+    conn = sqlite3.connect('db.sqlite3')
     c = conn.cursor()
     print("Opened database successfully")
 
@@ -369,6 +369,9 @@ def upload_file(json_file):
     c.execute("INSERT INTO jsonContent(content) VALUES(?)",[json_file]) #設為列表比較不會因為字數問題儲存錯誤
     conn.commit()
     print("Records created successfully")
+    '''# 取得作者id
+    cursor = c.execute("SELECT id FROM jsonContent WHERE content = '%s'", json_file) #若json為剛剛上傳的那分，就抓id
+    mind_id = cursor.fetchone()'''
     c.close()
 
 # 執行
@@ -394,8 +397,7 @@ def mm_execute(author, mdfile, select_level, do_textsum):
 
     # 產生json檔
     json_file = json.dumps(json_dict, ensure_ascii=False, separators=(',\n', ': ')) # 設定接收參數(dump轉換為str型態)
-    #--------------- 這裡要再改!!!!多傳一個參數(作者id)給upload_file，它也要多return jsonContent id---------------
-    upload_file(json_file)
+    upload_file(json_file, author.id)
     return json_file
     # mmid = upload_file(json_file, author.id)
     # return mmid

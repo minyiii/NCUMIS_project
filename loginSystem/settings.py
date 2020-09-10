@@ -96,9 +96,6 @@ WSGI_APPLICATION = 'loginSystem.wsgi.application'
 }'''
 
 
-
-
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
