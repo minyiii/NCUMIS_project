@@ -116,7 +116,7 @@
 
 <script>
 // @ is an alias to /src
-import MY_JSON from "./data.json";
+import MY_JSON from "./0909_test3.json";
 import VNBar from "@/components/Navbar-Top-New/index.vue";
 import Toolkit from "@/components/Toolkit/index.vue";
 
@@ -253,7 +253,9 @@ export default {
       var mind_data = this.jm.get_data();
       var mind_name = mind_data.meta.name;
       var mind_str = jsMind.util.json.json2string(mind_data);
-      jsMind.util.file.save(mind_str, "text/jsmind", mind_name + ".json");
+      console.log(mind_str);
+      // jsMind.util.file.save(mind_str, "text/jsmind", mind_name + ".json");
+      // 這裡改成將資料傳到後端
     },
     fontSize() {
       var selected_id = this.get_selected_nodeid();

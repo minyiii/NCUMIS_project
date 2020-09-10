@@ -3,28 +3,62 @@
     <VBar />
     <div class="login">
       <div class="box p-4">
-        <!-- <router-link to="/convert">Convert</router-link> -->
+        <router-link to="/convert">Convert</router-link>
         <h2>Register</h2>
-        <form action>
+        <form action @submit="SubmitHandler" @reset="ResetHandler">
           <div class="form-group">
             <label for="account">Account :</label>
-            <input type="text" name="account" id="account" class="form-control" />
+            <input
+              type="text"
+              name="account"
+              id="account"
+              class="form-control"
+              v-model="form.account"
+              required
+            />
           </div>
           <div class="form-group">
             <label for="date">Birthday :</label>
-            <input type="date" name="date" id="date" class="form-control" />
+            <input
+              type="date"
+              name="date"
+              id="date"
+              class="form-control"
+              v-model="form.bday"
+              required
+            />
           </div>
           <div class="form-group">
             <label for="email">E-mail :</label>
-            <input type="email" name="email" id="email" class="form-control" />
+            <input
+              type="email"
+              name="email"
+              id="email"
+              class="form-control"
+              v-model="form.email"
+              required
+            />
           </div>
           <div class="form-group">
             <label for="password">Password :</label>
-            <input type="password" name="password" id="password" class="form-control" />
+            <input
+              type="password"
+              name="password"
+              id="password"
+              class="form-control"
+              v-model="form.password"
+              required
+            />
           </div>
           <div class="form-group">
             <label for="pwd-confirm">Confirm Password :</label>
-            <input type="password" id="pwd-confirm" class="form-control" />
+            <input
+              type="password"
+              id="pwd-confirm"
+              class="form-control"
+              v-model="form.confirm"
+              required
+            />
           </div>
           <div class="btn-group d-flex">
             <input type="reset" value="Reset" class="btn btn-dark" />
@@ -44,6 +78,54 @@ export default {
   name: "Register",
   components: {
     VBar,
+  },
+  data() {
+    return {
+      form: {
+        account: "",
+        bday: "",
+        email: "",
+        password: "",
+        confirm: "",
+      },
+    };
+  },
+  methods: {
+    ResetHandler(evt) {
+      evt.preventDefault();
+      (this.form.account = ""),
+        (this.form.bday = ""),
+        (this.form.email = ""),
+        (this.form.password = ""),
+        (this.form.confirm = "");
+    },
+    SubmitHandler(evt) {
+      evt.preventDefault();
+      if (this.password != this.confirm) {
+        alert("Please check your password before you submit");
+      } else {
+        this.$axios
+          .post("http://localhost:3000/user-info", {
+            account: this.form.account,
+            bday: this.form.bday,
+            email: this.form.email,
+            password: this.form.pwd,
+          })
+          .then((res) => {
+            (this.form.account = ""),
+              (this.form.bday = ""),
+              (this.form.email = ""),
+              (this.form.password = ""),
+              (this.form.confirm = "");
+            // this.form.push("res.data");
+            this.$router.push("/login");
+            console.log(res);
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      }
+    },
   },
 };
 </script>
@@ -82,16 +164,6 @@ h2 {
   margin-top: 30px;
   margin-bottom: 30px;
   text-align: left;
-}
-@media screen and (max-width: 760px) {
-  .login {
-    height: 150vh;
-  }
-  .box {
-    width: 80%;
-    height: 80%;
-    margin-bottom: 30px;
-  }
 }
 @media screen and (max-height: 540px) {
   .login {
