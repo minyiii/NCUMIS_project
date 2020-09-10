@@ -70,6 +70,21 @@ export default {
     onSubmit(evt) {
       evt.preventDefault();
       alert(JSON.stringify(this.form));
+      // 以下資料傳到後端
+      // this.$axios
+      //   .post("http://localhost:3000/user-info", {
+      //     name: this.form.name,
+      //     email: this.form.email,
+      //   })
+      //   .then((res) => {
+      //     (this.form.name = ""),
+      //       (this.form.email = ""),
+      //       // this.form.push("res.data");
+      //       console.log(res);
+      //   })
+      //   .catch((error) => {
+      //     console.log(error);
+      //   });
     },
     onReset(evt) {
       evt.preventDefault();
@@ -92,7 +107,7 @@ export default {
       };
     },
     submitFiles() {
-      //這裡是要測試的地方
+      //更新 : 這裡是要測試的地方
       let formData = new FormData();
       formData.append("file", this.file);
       this.$axios
