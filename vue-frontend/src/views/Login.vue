@@ -5,13 +5,19 @@
       <div class="box p-4">
         <h2>Login</h2>
         <form action>
-          <div class="form-group">
+          <div class="form-group" @submit="SubmitHandler">
             <label for="account">Account :</label>
-            <input type="text" name="account" id="account" class="form-control" />
+            <input type="text" name="account" id="account" class="form-control" v-model="account" />
           </div>
           <div class="form-group">
             <label for="password">Password :</label>
-            <input type="password" name="password" id="password" class="form-control" />
+            <input
+              type="password"
+              name="password"
+              id="password"
+              class="form-control"
+              v-model="password"
+            />
           </div>
           <input type="submit" value="Submit" class="btn btn-dark" />
         </form>
@@ -27,18 +33,40 @@
 <script>
 // @ is an alias to /src
 import VBar from "@/components/Navbar-Top-After/index.vue";
-// import InputComponent from '@/components/InputComponent/index.vue'
 
 export default {
   name: "Login",
-  // data(){
-  //   return{
-  //     title:"Hello"
-  //   }
-  // },
+  data() {
+    return {
+      account: "",
+      password: "",
+    };
+  },
   components: {
     VBar,
-    // InputComponent
+  },
+  created() {
+    this.$axios.get("http://localhost:3000/user-info").then((res) => {
+      console.log(res.data[0].account);
+    });
+  },
+  methods: {
+    SubmitHandler() {
+      // 尚須修改，因牽扯password，可能需加個token
+      this.$axios.get("http://localhost:3000/user-info").then((res) => {
+        for (i in res.data.length) {
+          if (
+            this.account == res.data[i].account &&
+            this.password == res.data[i].password
+          ) {
+            localStorage.setItem("token", "ImLogin");
+            this.$router.push("/convert");
+          } else {
+            alert("login failed");
+          }
+        }
+      });
+    },
   },
 };
 </script>
@@ -46,7 +74,7 @@ export default {
 <style scoped>
 .login {
   width: 100%;
-  height: 100vh;
+  height: 92vh;
 }
 .box {
   margin: auto;
