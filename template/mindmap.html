@@ -1,0 +1,31 @@
+<!doctype html>
+<html>
+    <head>
+        <title> Mindmaps </title>
+        <meta charset='utf-8'>
+    </head>
+    <body>
+        <h2>{{ name }} 心智圖列表</h2>
+        <h3> <a href='/account/login'> 登入 </a></h3>
+        <form method="post">{% csrf_token %}
+            <table>
+                <tr>
+                    <th>id</th>
+                    <th>作者</th>
+                    <th>標題</th>
+                    <th>刪除</th>
+                </tr>
+                {% for j in jsons %}
+                    <tr>
+                        <td> <a href="edit/{{j.id}}"> {{ j.id }} </a> </td>
+                        <td> {{ j.author }} </td>
+                        <td contenteditable="true"> {{ j.title }} </td>
+                        <td> <a href="delete/{{j.id}}"> 刪除 </a> </td>
+                    </tr>
+                {% endfor %}
+            </table>
+            <input type="submit" value="修改">
+        </form>
+        <h3>{{msg}}</h3>
+    </body>
+</html>

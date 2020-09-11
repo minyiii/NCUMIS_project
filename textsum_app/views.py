@@ -42,85 +42,7 @@ def upload(request):
     return render(request, 'convert.html')
     return redirect('/upload')
 
-# V；顯示整個工作區；回傳該作者的所有心智圖(可能為空)
-def mindmap(request):
-    if request.user.is_authenticated:
-        # 如果有傳入mmid，有兩種可能
-        if 'mmid' in request.GET:
-            mmid = request.GET['mmid']
-            # I:更新description
-            if 'update_str' in request.GET:
-                update_str = request.GET['update_str']
-                try:
-                    jsonContent.objects.filter(id=mmid).update(content=update_str)
-                    message = '更新成功'
-                except:
-                    message = '更新失敗'
-
-                return render(request, 'mindmap.html', {'message':message})
-            # II:代表要編輯某一個
-            else:
-                # ------------ 下面這部分不太確定 ------------
-                j = jsonContent.objects.get(id=mmid) # 從DB撈
-                return render_to_response('mmedit.html', {'mmid':mmid, 'j':j})
-                # return render_to_response('mmedit.html', {'mmid':mmid})
-
-        # III:如果有傳入del_id，代表要刪除某一個
-        elif 'del_id' in request.GET:
-            del_id = request.GET['del_id']
-            try:
-                # ------------- 這裡的var name再去對照前端的 -------------
-                j = jsonContent.objects.get(id=del_id) # 從DB撈
-                j.delete()
-                message = '刪除成功'
-            except:
-                message = '刪除失敗'
-
-            return render(request, 'mindmap.html', {'message':message})
-
-        # IV:都沒傳就是要看全部
-        else:
-            try:
-                user = settings.AUTH_USER_MODEL.object.get(user=request.user)
-                jsonContents = models.jsonContent.object.filter(author=user)
-            except:
-                pass
-
-            return render(request, 'mindmap.html', {'jsonContents':jsonContents})
-
-    return render(request, 'login.html')
-
-'''# V；顯示編輯心智圖畫面；透過網址傳入mmid->去DB撈->回傳json檔；失敗回傳mindmap頁面
-def mmedit(request, mmid):
-    if request.user.is_authenticated:
-        try:
-            # ------------- 這裡的var name再去對照前端的 -------------
-            j = jsonContent.objects.get(id=mmid) # 從DB撈
-            return render(request, 'mmedit.html', locals())
-        except:
-            return render(request, 'mindmap.html')
-    return render(request, 'login.html')'''
-
-'''
-# 第二版，連同儲存json檔也寫進去
-def mmedit2(request, mmid):
-    if request.user.is_authenticated:
-        if request.method == "POST":
-            try:
-                jsonContent.objects.filter(id=mmid).update(upload=request.POST['json'])
-                message = '更新成功'
-            except:
-                message = '更新失敗'
-        try:
-            # ------------- 這裡的var name再去對照前端的 -------------
-            j = jsonContent.objects.get(id=mmid) # 從DB撈
-            return render(request, 'mmedit.html', locals())
-        except:
-            return render(request, 'mindmap.html')
-    return render(request, 'login.html')
-
-
-# 更新json檔(mmedit的儲存)
+'''# 更新json檔(mmedit的儲存)
 def update_json(request, mmid):
     if request.user.is_authenticated:
         if 'mmid' in request.POST and 'json' in request.POST:
@@ -135,29 +57,6 @@ def update_json(request, mmid):
             return render(request, 'mmedit.html', locals())
     return render(request, 'login.html')'''
 
-'''# 刪除心智圖
-def delete(request, del_id):
-    if request.user.is_authenticated:
-        try:
-            # ------------- 這裡的var name再去對照前端的 -------------
-            j = jsonContent.objects.get(id=del_id) # 從DB撈
-            j.delete()
-            message = '刪除成功'
-        except:
-            message = '刪除失敗'
-
-    return render(request, 'mindmap.html', {'message':message})'''
-
-'''# (這感覺不用?如果前端有導到mmedit/id就不用) V；從工作區開一個檔案
-def open(request):
-    if request.user.is_authenticated:
-        try:
-            if 'mmid' in request.GET:
-                mmid = request.GET['mmid']
-                return render(request, 'mmedit.html', locals())
-        except:
-            pass
-    return render(request, 'mindmap.html')'''
 # ------------------- function ---------------------
 # 取得
 def get_key (dict_, value):

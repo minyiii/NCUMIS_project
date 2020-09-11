@@ -12,7 +12,7 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.AddField(
-            model_name='jsoncontent',
+            model_name='jsonContent',
             name='upload',
             field=models.FileField(default=django.utils.timezone.now, upload_to='uploads/'),
             preserve_default=False,

@@ -19,5 +19,6 @@ from django.urls import path,include
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('account/',include('authenticate_app.urls')),
-    path('convert/', include('textsum_app.urls'))
+    path('convert/', include('textsum_app.urls')),
+    path('mindmap/', include('mindmap_app.urls'))
 ]

@@ -1,0 +1,25 @@
+<!doctype html>
+<html>
+    <head>
+        <title> Mindmap </title>
+        <meta charset='utf-8'>
+    </head>
+    <body>
+        <h2>心智圖{{id}} </h2>
+        <form action="" method="post">{% csrf_token %}
+            <table>
+                <tr>
+                    <th>作者</th>
+                    <th>標題</th>
+                    <th>json檔</th>
+                </tr>
+                <tr>
+                    <td> {{ j.author }} </td>
+                    <td contenteditable="true"> {{ j.title }} </td>
+                    <td> {{ j.content }} </td>
+                </tr>
+            </table>
+            <input type="submit" value="修改">
+        </form>
+    </body>
+</html>
