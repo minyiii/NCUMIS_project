@@ -7,8 +7,8 @@ import re
 import pandas as pd
 import random, string
 import json
-from textrank4zh import TextRank4Keyword, TextRank4Sentence
-import psycopg2
+# from textrank4zh import TextRank4Keyword, TextRank4Sentence
+# import psycopg2
 import sqlite3
 
 # ------------------- 要從前端取得的內容 -------------------
