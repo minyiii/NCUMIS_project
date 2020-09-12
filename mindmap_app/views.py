@@ -4,9 +4,6 @@ from textsum_app.models import jsonContent
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 
-'''class MMView(View):
-    def get(self, request):
-        return HttpResponse('媽，我在這！')'''
 
 # 取得此用戶的所有心智圖
 def get_mindmap(request):
@@ -47,7 +44,7 @@ def del_mindmap(request, id):
 # 編輯某一心智圖的敘述
 def edit_describe(request, id):
     if id and request.user.is_authenticated:
-        print(request)
+        # print(request)
         try:
             # describe = request.POST['describe']
             title = request.POST['title']

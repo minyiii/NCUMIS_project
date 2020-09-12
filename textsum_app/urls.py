@@ -1,13 +1,8 @@
 from django.urls import path
 from . import views
 
-
-
+# convert/
 urlpatterns =[
-    path('', views.upload, name='upload'), # 轉換區
-    # path('mmedit/<int:mmid>/', views.mmedit, name='mmedit'), # 編輯心智圖
-    # path('mmedit/<int:mmid>/', views.mmedit2, name='mmedit'), # 編輯心智圖
-    path('mindmap/', views.mindmap, name='mindmap'), # 筆記區
-    # path('mmedit/<int:mmid>/', views.update_json, name='update_json'), # 更新筆記
-    # path('mindmap/<int:del_id>/', views.delete, name='delete_mm'), # 刪除筆記
+    path('', views.upload, name='upload'), # POST/上傳.md檔
+    # path('save/<int:id>/', views.json_save, name='json_save'), # POST/編輯頁面中儲存檔案(回傳JSON檔)
 ]

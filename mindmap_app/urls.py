@@ -2,7 +2,7 @@ from django.urls import path
 from . import views
 # from django.views.generic.base import View
 
-
+# mindmap/
 urlpatterns =[
     # path('', views.MMView.as_view(), name='upload'),
     path('', views.get_mindmap, name='get_mindmap'), # 取得此用戶的所有心智圖

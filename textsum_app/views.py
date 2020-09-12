@@ -2,45 +2,80 @@ from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from textsum_app.models import jsonContent
 from django.conf import settings
+from django.core.files.storage import FileSystemStorage
 from . import models
 import re
 import pandas as pd
 import random, string
 import json
-# from textrank4zh import TextRank4Keyword, TextRank4Sentence
-# import psycopg2
+from django import forms
+from textrank4zh import TextRank4Keyword, TextRank4Sentence
+import psycopg2
 import sqlite3
 
 # ------------------- 要從前端取得的內容 -------------------
 # sub代表li底下的解釋
 level_num = {'h1':5, 'h2':4, 'h3':3, 'text':2, 'li':1, 'sub':0}
+df_level = pd.DataFrame(columns=['level', 'topic', 'father', 'is_sum'])
+
 # do_textsum = True
 # user選擇要不要顯示這個level
 # select_level = {'h1':True, 'h2':True, 'h3':False, 'text':False, 'li':True, 'sub':True}
 
 # ------------------- request -------------------
-# V；上傳檔案以進行轉換
-def upload(request):
-    if request.method == "POST":
-        # if request.user.is_authenticated: # 有登入才能上傳
-        author = request.user
-        select_level = {'h1':True, 'h2':True, 'h3':False, 'text':False, 'li':True, 'sub':True}
-        try:
-            select_level['h2'] = request.POST['H2']
-            select_level['h3'] = request.POST['H3']
-            select_level['text'] = request.POST['Paragraph']
-            mdfile = request.POST['mdfile'] # 待確認
-            do_textsum = request.POST['Summary']
-        except:
-            mdfile = NULL
+# 上傳
+def upload_2(request):
+    form = UploadDocumentForm()
+    if request.method == 'POST':
+        form = UploadDocumentForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
 
-        if mdfile!=NULL: # 若有上傳檔案，開啟編輯畫面
-            json_file = mm_execute(author, mdfile, select_level, do_textsum)
-            # return render_to_response('mmedit.html', {'mmid':mmid, 'j':j})
-            return render(request, 'mmedit.html', {'mmid':mmid, 'json_file':json_file})
-    # return render_to_response('.html')
-    return render(request, 'convert.html')
-    return redirect('/upload')
+    # return render(request, 'upload_doc.html', locals())
+    return render(request, 'edit.html')
+
+
+# 上傳檔案以進行轉換
+def upload(request):
+    if request.user.is_authenticated:
+        author = request.user
+        print(author)
+        if request.method == "POST":
+            select_level = {'h1':True, 'h2':True, 'h3':False, 'text':False, 'li':True, 'sub':True}
+            try:
+                '''select_level['h2'] = request.POST['H2']
+                select_level['h3'] = request.POST['H3']
+                select_level['text'] = request.POST['Paragraph']
+                do_textsum = request.POST['Summary']'''
+                do_textsum = True
+
+                mdfile = request.FILES['mdfile']
+                '''fs = FileSystemStorage(location='/upload/uploads')
+                name = fs.save(mdfile.name, mdfile)
+                # name = fs.save(md_name, mdfile)
+                md_url = fs.url(name)
+                print('mdfile.name: '+mdfile.name)
+                # print('md_name: '+md_name)
+                print('name: '+name)
+                print('md_url: '+md_url) # /upload/MD_test2_jJF0yvx.md'''
+
+                j = jsonContent.objects.create(author=author, title=mdfile.name , upload=mdfile)
+                j.save()
+                print('j.id: '+str(j.id))
+                print('j.upload: '+str(j.upload)) # uploads/MD_test5_a7mTNBk.md
+                md_url = './upload/{url}'.format(url=j.upload)
+                print(md_url)
+
+                json_file, m_id = mm_execute(author, md_url, select_level, do_textsum)
+                print('after mm_exe')
+                # return render(request, 'edit.html')
+                return render(request, 'edit.html', {'id':m_id, 'j':json_file})
+            except:
+                pass
+        # return HttpResponseRedirect('/convert/')
+        return render(request, 'convert.html', {'name': author})
+    return render(request,"login.html")
+
 
 '''# 更新json檔(mmedit的儲存)
 def update_json(request, mmid):
@@ -79,10 +114,13 @@ def download_mdfile():
 #print(upload_testmd)
 
 # 取得資料
-def get_md():
+def get_md(md_url):
+    print('in get md')
     # 下面這行之後應該是從資料庫抓，要再改
-    fileread =  open('./loginSystem/text_sum/text_data/經濟學 CH22 微觀經濟學.md','r', encoding="utf-8")
+    # fileread =  open('./loginSystem/text_sum/text_data/經濟學 CH22 微觀經濟學.md','r', encoding="utf-8")
+    fileread =  open(md_url,'r', encoding="utf-8")
     lines = fileread.readlines() #逐行讀取
+    print('readline end')
     lines_=[]
     for i in lines:
         i_ = pre_remove(i)
@@ -107,7 +145,9 @@ def get_level(sent):
 
 # 定義每句的level，傳回dataframe(目前header都可，其他level若需要可再加)
 def define_level(md_list):
-    df_level = pd.DataFrame(columns=['level', 'topic', 'father', 'is_sum'])
+    print('in define level')
+    # df_level = pd.DataFrame(columns=['level', 'topic', 'father', 'is_sum'])
+    global df_level
     if md_list!=[]:
         f_index = 0
         for sent in md_list:
@@ -133,7 +173,7 @@ def define_level(md_list):
                 count-=1
             s = pd.Series({'level':level, 'topic':remove_title(sent), 'father':f_index, 'is_sum':False})
             df_level = df_level.append(s, ignore_index=True)
-    return df_level
+    # return df_level
 
 # 前處理-斜、粗體、冒號、>；移除特殊char
 def pre_remove(s):
@@ -194,6 +234,8 @@ def remove_title(s):
 
 # 遞迴產生json檔案
 def get_node(index, select_level):
+    print('in get node')
+    global df_level
     now_node={'id':''.join(random.choice(string.ascii_letters) for x in range(6)),
             'topic':df_level.loc[index][1]}
     child_list=[]
@@ -217,6 +259,7 @@ def get_node(index, select_level):
 
 # 取得摘要的節點
 def get_sum_node():
+    print('in get sum node')
     sum_node={'id':''.join(random.choice(string.ascii_letters) for x in range(6)),
             'topic':'摘要'}
     child_list=[]
@@ -227,10 +270,13 @@ def get_sum_node():
         child_list.append(ch_node)
 
     sum_node['children']=child_list
+    print('get sum node end')
     return sum_node
 
 # 把df_level中level為text的內容抓來做文本摘要，會回傳摘要句子及其在df中的index
 def catch_label():
+    print('in catch_label')
+    global df_level
     paragraph = df_level[df_level["level"] == "text"] # 把所有為text level的內容都整理成新的df
     par = ""
     summary = []
@@ -239,8 +285,8 @@ def catch_label():
     index = paragraph.index
     for i in range(len(sentence)):
         par += sentence[i] + "\n"
-    # print(sentence)
-    # print(index)
+    print(sentence)
+    print(index)
 
     # 文字摘要
     tr4s = TextRank4Sentence()
@@ -253,11 +299,12 @@ def catch_label():
             if i.sentence == sentence[j]:
                 summary_index.append(index[j])
                 break
-
+    print('catch_label end')
     return summary, summary_index
 
 # 把json_file上傳到資料庫(sqlite3版)
 def upload_file(json_file, author_id):
+    print('upload_file start')
     #db_name = "db.sqlite3"
     #conn = psycopg2.connect(database="postgres", user="postgres", password="misG6_5PEN", host="127.0.0.1", port=5432) #定義資料存取位置
     conn = sqlite3.connect('db.sqlite3')
@@ -268,17 +315,24 @@ def upload_file(json_file, author_id):
     c.execute("INSERT INTO jsonContent(content) VALUES(?)",[json_file]) #設為列表比較不會因為字數問題儲存錯誤
     conn.commit()
     print("Records created successfully")
-    '''# 取得作者id
+    # 取得心智圖id
     cursor = c.execute("SELECT id FROM jsonContent WHERE content = '%s'", json_file) #若json為剛剛上傳的那分，就抓id
-    mind_id = cursor.fetchone()'''
+    m_id = cursor.fetchone()
     c.close()
+    print('upload_file end')
+    return m_id
 
 # 執行
-def mm_execute(author, mdfile, select_level, do_textsum):
+def mm_execute(author, md_url, select_level, do_textsum):
+    print('mm_exe start')
+    global df_level
     # 生成dataframe
-    df_level = define_level(get_md())
-    # print(df_level)
+    # df_level = define_level(get_md(md_url))
+    define_level(get_md(md_url))
+    print(df_level)
     node_dict = get_node(0, select_level)
+
+    print('before if do_textsum')
 
     # 得到摘要index
     if do_textsum:
@@ -293,13 +347,13 @@ def mm_execute(author, mdfile, select_level, do_textsum):
     json_dict = {'meta':meta_dict,
                 'format':"node_tree",
                 'data':node_dict}
-
+    print('before json dump')
     # 產生json檔
     json_file = json.dumps(json_dict, ensure_ascii=False, separators=(',\n', ': ')) # 設定接收參數(dump轉換為str型態)
-    upload_file(json_file, author.id)
-    return json_file
-    # mmid = upload_file(json_file, author.id)
-    # return mmid
+    # upload_file(json_file, author.id)
+    m_id = upload_file(json_file, author.id)
+    print('mm_execute end')
+    return json_file, m_id
 
 
 # -----------------以下可刪

@@ -1,0 +1,17 @@
+<!doctype html>
+<html>
+    <head>
+        <title> Mindmaps </title>
+        <meta charset='utf-8'>
+    </head>
+    <body>
+        <h2>{{ name }} 上傳 </h2>
+        <h3> <a href='/account/login'> 登入 </a></h3>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="file" name="mdfile"><br>
+            <button type="submit">Upload File </button>
+        </form>
+        <h3>{{msg}}</h3>
+    </body>
+</html>
