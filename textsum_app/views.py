@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect
 from textsum_app.models import jsonContent
 from django.conf import settings
@@ -10,7 +10,7 @@ import random, string
 import json
 from django import forms
 from textrank4zh import TextRank4Keyword, TextRank4Sentence
-import psycopg2
+# import psycopg2
 import sqlite3
 
 # ------------------- 要從前端取得的內容 -------------------
@@ -23,18 +23,6 @@ df_level = pd.DataFrame(columns=['level', 'topic', 'father', 'is_sum'])
 # select_level = {'h1':True, 'h2':True, 'h3':False, 'text':False, 'li':True, 'sub':True}
 
 # ------------------- request -------------------
-# 上傳
-def upload_2(request):
-    form = UploadDocumentForm()
-    if request.method == 'POST':
-        form = UploadDocumentForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-
-    # return render(request, 'upload_doc.html', locals())
-    return render(request, 'edit.html')
-
-
 # 上傳檔案以進行轉換
 def upload(request):
     if request.user.is_authenticated:
@@ -48,33 +36,32 @@ def upload(request):
                 select_level['text'] = request.POST['Paragraph']
                 do_textsum = request.POST['Summary']'''
                 do_textsum = True
-
                 mdfile = request.FILES['mdfile']
-                '''fs = FileSystemStorage(location='/upload/uploads')
-                name = fs.save(mdfile.name, mdfile)
-                # name = fs.save(md_name, mdfile)
-                md_url = fs.url(name)
-                print('mdfile.name: '+mdfile.name)
-                # print('md_name: '+md_name)
-                print('name: '+name)
-                print('md_url: '+md_url) # /upload/MD_test2_jJF0yvx.md'''
 
                 j = jsonContent.objects.create(author=author, title=mdfile.name , upload=mdfile)
-                j.save()
-                print('j.id: '+str(j.id))
+                j.save() # save後autofield才會計算完
+                j_id = j.id
+                print('j.id: '+str(j_id))
                 print('j.upload: '+str(j.upload)) # uploads/MD_test5_a7mTNBk.md
                 md_url = './upload/{url}'.format(url=j.upload)
                 print(md_url)
 
-                json_file, m_id = mm_execute(author, md_url, select_level, do_textsum)
+                j_url = mm_execute(j_id, author, md_url, select_level, do_textsum)
                 print('after mm_exe')
+
+                j = jsonContent.objects.get(id=j_id)
+                j.content = j_url
+                j.save()
+
                 # return render(request, 'edit.html')
-                return render(request, 'edit.html', {'id':m_id, 'j':json_file})
+                # return render(request, 'edit.html', {'id':j_id, 'j':j.content})
+                return redirect ("/mindmap/edit")
+
             except:
                 pass
         # return HttpResponseRedirect('/convert/')
         return render(request, 'convert.html', {'name': author})
-    return render(request,"login.html")
+    return redirect ("/account/login")
 
 
 '''# 更新json檔(mmedit的儲存)
@@ -258,7 +245,7 @@ def get_node(index, select_level):
     return now_node
 
 # 取得摘要的節點
-def get_sum_node():
+def get_sum_node(sum):
     print('in get sum node')
     sum_node={'id':''.join(random.choice(string.ascii_letters) for x in range(6)),
             'topic':'摘要'}
@@ -302,6 +289,7 @@ def catch_label():
     print('catch_label end')
     return summary, summary_index
 
+
 # 把json_file上傳到資料庫(sqlite3版)
 def upload_file(json_file, author_id):
     print('upload_file start')
@@ -316,14 +304,14 @@ def upload_file(json_file, author_id):
     conn.commit()
     print("Records created successfully")
     # 取得心智圖id
-    cursor = c.execute("SELECT id FROM jsonContent WHERE content = '%s'", json_file) #若json為剛剛上傳的那分，就抓id
-    m_id = cursor.fetchone()
+    '''cursor = c.execute("SELECT id FROM jsonContent WHERE content = '%s'", json_file) #若json為剛剛上傳的那分，就抓id
+    m_id = cursor.fetchone()'''
     c.close()
     print('upload_file end')
-    return m_id
+    # return m_id
 
 # 執行
-def mm_execute(author, md_url, select_level, do_textsum):
+def mm_execute(j_id, author, md_url, select_level, do_textsum):
     print('mm_exe start')
     global df_level
     # 生成dataframe
@@ -337,7 +325,7 @@ def mm_execute(author, md_url, select_level, do_textsum):
     # 得到摘要index
     if do_textsum:
         sum, sum_index = catch_label()
-        node_dict['children'].append(get_sum_node())
+        node_dict['children'].append(get_sum_node(sum))
         # print(sum_index)
 
     meta_dict = {"name":"jsMind remote", # file name要再改
@@ -349,50 +337,16 @@ def mm_execute(author, md_url, select_level, do_textsum):
                 'data':node_dict}
     print('before json dump')
     # 產生json檔
-    json_file = json.dumps(json_dict, ensure_ascii=False, separators=(',\n', ': ')) # 設定接收參數(dump轉換為str型態)
+    # json_file = json.dumps(json_dict, ensure_ascii=False, separators=(',\n', ': ')) # 設定接收參數(dump轉換為str型態)
+
+    j_url = 'uploads_json/{name}.json'.format(name=str(j_id))
+    print(j_url)
+
+    with open('./upload/{url}'.format(url=j_url), 'w', encoding='utf8') as fp:
+        json.dump(json_dict, fp, ensure_ascii=False)
+        print('寫入成功')
+
     # upload_file(json_file, author.id)
-    m_id = upload_file(json_file, author.id)
+    # m_id = upload_file(json_file, author.id)
     print('mm_execute end')
-    return json_file, m_id
-
-
-# -----------------以下可刪
-'''md_list = get_md()
-print(md_list)
-
-df_level = define_level(md_list) # 生成dataframe
-print(df_level)
-
-# # 可省
-# for index in range(len(df_level)):
-#     print('index:', index, 'text: ', df_level.loc[index][1][0:5] , 'father_index: ', df_level.loc[index][2])
-
-# 取得欲建立json檔前的dict
-node_dict = get_node(0)
-
-# 得到摘要index
-if do_textsum:
-    sum, sum_index = catch_label()
-    node_dict['children'].append(get_sum_node())
-    # print(sum_index)
-
-meta_dict = {"name":"jsMind remote",
-            "author":"hizzgdev@163.com",
-            "version":"0.2"}
-
-json_dict = {'meta':meta_dict,
-            'format':"node_tree",
-            'data':node_dict}
-
-# 產生json檔
-json_file = json.dumps(json_dict, ensure_ascii=False, separators=(',\n', ': ')) # 設定接收參數(dump轉換為str型態)
-upload_file(json_file)'''
-
-# 把json_file上傳到資料庫(照理說是django連接前端和資料庫，但沒辦法做到平行把資料丟到後端吧???)
-'''
-class jsonContent(models.Model):
-    f = SimpleUploadedFile('upload.json', b"json_file")
-    print("成功讀取")
-
-testfile = jsonContent.objects.create(file = f)
-'''
+    return j_url
