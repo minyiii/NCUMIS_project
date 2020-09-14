@@ -15,10 +15,12 @@ import os
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-TEMPLATE_DIR = os.path.join(BASE_DIR,'template')
-# TEMPLATE_DIR = os.path.join(BASE_DIR,'vue-frontend')
-# TEMPLATE_DIR = os.path.join(BASE_DIR,'vue-frontend/src/views')
-STATIC_DIR = os.path.join(BASE_DIR,'static')
+# TEMPLATE_DIR = os.path.join(BASE_DIR,'template')
+# STATIC_DIR = os.path.join(BASE_DIR,'static')
+
+TEMPLATE_DIR = os.path.join(BASE_DIR,'vue-frontend/dist')
+STATIC_DIR = os.path.join(BASE_DIR,'vue-frontend/dist/static')
+
 MEDIA_ROOT = os.path.join(BASE_DIR, 'upload/')
 MEDIA_URL = '/upload/'
 

@@ -15,10 +15,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path,include
+from django.views.generic import TemplateView # 新增的
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('account/',include('authenticate_app.urls')),
     path('convert/', include('textsum_app.urls')),
-    path('mindmap/', include('mindmap_app.urls'))
+    path('mindmap/', include('mindmap_app.urls')),
+    path('', TemplateView.as_view(template_name="index.html")),
 ]

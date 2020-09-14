@@ -22,7 +22,8 @@ def edit_mindmap(request, id):
         try:
             # get條件多一個author是怕有人憑id取挖別人的檔案
             j = jsonContent.objects.get(id=id, author=request.user)
-            return render(request, 'edit.html', locals())
+            # return render(request, 'edit.html', locals())
+            return render(request, 'MMEdit.vue', locals())
         except:
             return HttpResponseRedirect('/mindmap/')
     return render(request,"login.html")

@@ -69,6 +69,10 @@ export default new Router({
       // which is lazy-loaded when the route is visited.
       component: () => import(/* webpackChunkName: "about" */ "../views/MMEdit.vue"),
     },
+    {
+      path:"*",
+      redirect:"/"
+    },
     // {
     //   path: "/notes",
     //   name: "Notes",
@@ -96,5 +100,6 @@ export default new Router({
     //   component: () =>
     //     import(/* webpackChunkName: "about" */ "../views/Original-Note.vue")
     // }
+
   ]
 });

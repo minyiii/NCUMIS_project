@@ -52,7 +52,8 @@ def upload(request):
                 return redirect ("/mindmap/edit/{id}".format(id=str(j_id)))
             except:
                 pass
-        return render(request, 'convert.html', {'name': author})
+        # return render(request, 'convert.html', {'name': author})
+        return render(request, 'Convert.vue', {'name': author})
     return redirect ("/account/login")
 
 # ------------------- function ---------------------
