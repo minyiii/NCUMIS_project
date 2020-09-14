@@ -18,10 +18,6 @@ import sqlite3
 level_num = {'h1':5, 'h2':4, 'h3':3, 'text':2, 'li':1, 'sub':0}
 df_level = pd.DataFrame(columns=['level', 'topic', 'father', 'is_sum'])
 
-# do_textsum = True
-# user選擇要不要顯示這個level
-# select_level = {'h1':True, 'h2':True, 'h3':False, 'text':False, 'li':True, 'sub':True}
-
 # ------------------- request -------------------
 # 上傳檔案以進行轉換
 def upload(request):
@@ -53,31 +49,11 @@ def upload(request):
                 j.content = j_url
                 j.save()
 
-                # return render(request, 'edit.html')
-                # return render(request, 'edit.html', {'id':j_id, 'j':j.content})
-                return redirect ("/mindmap/edit")
-
+                return redirect ("/mindmap/edit/{id}".format(id=str(j_id)))
             except:
                 pass
-        # return HttpResponseRedirect('/convert/')
         return render(request, 'convert.html', {'name': author})
     return redirect ("/account/login")
-
-
-'''# 更新json檔(mmedit的儲存)
-def update_json(request, mmid):
-    if request.user.is_authenticated:
-        if 'mmid' in request.POST and 'json' in request.POST:
-            mmid = request.GET['mmid']
-            json = request.GET['json']
-            try:
-                jsonContent.objects.filter(id=mmid).update(upload=json)
-                message = '更新成功'
-            except:
-                message = '更新失敗'
-
-            return render(request, 'mmedit.html', locals())
-    return render(request, 'login.html')'''
 
 # ------------------- function ---------------------
 # 取得
@@ -290,7 +266,7 @@ def catch_label():
     return summary, summary_index
 
 
-# 把json_file上傳到資料庫(sqlite3版)
+'''# 把json_file上傳到資料庫(sqlite3版)
 def upload_file(json_file, author_id):
     print('upload_file start')
     #db_name = "db.sqlite3"
@@ -304,11 +280,11 @@ def upload_file(json_file, author_id):
     conn.commit()
     print("Records created successfully")
     # 取得心智圖id
-    '''cursor = c.execute("SELECT id FROM jsonContent WHERE content = '%s'", json_file) #若json為剛剛上傳的那分，就抓id
-    m_id = cursor.fetchone()'''
+    cursor = c.execute("SELECT id FROM jsonContent WHERE content = '%s'", json_file) #若json為剛剛上傳的那分，就抓id
+    m_id = cursor.fetchone()
     c.close()
     print('upload_file end')
-    # return m_id
+    # return m_id'''
 
 # 執行
 def mm_execute(j_id, author, md_url, select_level, do_textsum):

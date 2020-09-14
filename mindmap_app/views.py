@@ -57,3 +57,24 @@ def edit_describe(request, id):
             msg = '修改失敗'
             return HttpResponseRedirect('/mindmap/')
     return render(request,"login.html")
+
+# 儲存檔案(更新json檔)
+def save_json(request, id):
+    if request.user.is_authenticated:
+        author = request.user
+        if request.method == "POST":
+            try:
+                id = request.POST['id']
+                jfile = request.FILES['jfile']
+
+                print('id: {id}, jfile: {j} '.format(id, jfile))
+
+                j = jsonContent.objects.get(id=id)
+                j.content = jfile
+                j.save()
+
+                return render(request, 'edit.html', {'id': id, 'j':j})
+            except:
+                pass
+        return render(request, 'edit.html', {'id': id})
+    return redirect ("/account/login")
