@@ -39,11 +39,15 @@ def download_mdfile(author_id): #要跟前端要id
 # 取得資料
 def get_md():
     # 下面這行之後應該是從資料庫抓，要再改
-    fileread =  open('./loginSystem/text_sum/text_data/澳洲銀行業傳將買更多政府債券、為刺激法案提供資金.md','r', encoding="utf-8")
+    fileread =  open('./loginSystem/text_sum/text_data/經濟學 CH22 微觀經濟學.md','r', encoding="utf-8")
     lines = fileread.readlines() #逐行讀取
     lines_=[]
     for i in lines:
         i_ = pre_remove(i)
+        '''if re.search('[0-9]+.[0-9]+',i) != None: # 如果有包含小數就要進入判斷
+            #print(i)
+            format_num = re.findall(r"\d+\.?\d*", i)'''
+        #print(i_)
         if i_.strip()!='':
             lines_.append(i_.strip())
     return lines_
@@ -96,13 +100,14 @@ def define_level(md_list):
 # 前處理-斜、粗體、冒號、>；移除特殊char
 def pre_remove(s):
     # 刪除圖片url
-    str_url = r'[a-z]*[:.]+\S+'
+    str_url = r'(?<=<a href=\").+(.html|/)(?=\")' #乾原來是因為處理掉url
     s_ = re.sub(str_url, '', s)
 
     s_ = s_.replace(':::', '')
     s_ = s_.replace('>','')
     s_ = s_.replace('!','')
     s_ = s_.replace('[]','')
+    s_ = s_.replace('==','')
 
     pos = find_substr(s_, '~~')
     if pos:
@@ -144,7 +149,7 @@ def remove_title(s):
     s_ = s_.replace('*','')
     s_ = s_.replace('#','')
 
-    rem_chars = r'(\d+)\.\s' # 移除'1. '、'2. '
+    rem_chars = r'(\d+)\.\s' # 移除'1. '、'2. ' 
     s_ = re.sub(rem_chars, '', s_)
 
     return s_.strip()
@@ -285,8 +290,8 @@ json_dict = {'meta':meta_dict,
 
 # 產生json檔
 #json_file = json.dumps(node_dict, ensure_ascii=False, separators=(',\n', ': ')) # 設定接收參數(dump轉換為str型態)
-with open('./loginSystem/text_sum/json/0909_test3.json','w',encoding="utf-8") as f:
-     json.dump(node_dict, f,ensure_ascii=False, separators=(',\n', ': '))
+with open('./loginSystem/text_sum/json/0916_test5.json','w',encoding="utf-8") as f:
+     json.dump(json_dict, f,ensure_ascii=False, separators=(',\n', ': '))
 
 # 把json_file上傳到資料庫(sqlite3版)
 def upload_file(json_file,id):
